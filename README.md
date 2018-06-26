@@ -36,7 +36,7 @@ The `curve_factor` is the other important concept to grasp, but it's somewhat my
 
 **The need to linearize the exponential curves sounds like it comes only from that being hard to do in Ethereum? Aren't all of these things are just premature optimisations that we shouldn't need to be doing?**
 
-This is not a premature optimisation, it is the thing itself which makes it all work, because the rate and interval are set as functions of TOTAL SNT and we just optimise the 2 constants parameterising things that way give us
+This is not a premature optimisation, it is the thing itself which makes it all work, because the rate and interval are set as functions of TOTAL SNT and we just optimise the 2 constants parameterising things that way gives us.
 
 **OK, explain the incentives to me on the contract in terms of 1.) the user of the app 2.) the developer**
 
@@ -58,6 +58,9 @@ So it's not about sorting, it's about curating, and we need to figure out the wa
 The point is that the contract represents *contractual reality*, to which we as Status are not bound, if we do not wish to be. 
 Code is *like* law, but even law is just the rules other people have made (people no better, nor any worse, than us).
 Status does not have to show the exact rankings in the registry. We can reserve the right to ban a DApp for 2, very specific, and falsifiable reasons:
+
+1. Malicious code. Requires a link to code and proof of why it is malicious.
+2. Vote manipulation. Requires a blockchain proof of suspicious transactions.
 
 **So in the current model only the developer can stake? Or is there an option for others to participate as well?**
 
