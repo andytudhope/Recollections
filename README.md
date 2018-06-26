@@ -6,7 +6,7 @@ The beauty of Ethereum to me, can be summed up simply:
 
 What's more, **what's different this time**, is that the idealism exists independently of the people who encoded it, who inevitably become corrupted in some way, because we are all human. And to be human is to be corruptible, in some very real and simple way. 
 
-So, I have designed a pretty neat way to curate DApps in our registry, which I think represents a *general* solution to the problem of how best and most simply to curate information without any central form of authority *including the community*, because cryptoeconomics is not about egalitarianism, it is about designing systems with no central point of control. Decentralisation is the goal, egalitarianism is a great success metric. But not the way around, because egalitarianism is not a purely mathematical function that can be optimised.
+So, I have designed a pretty neat way to curate DApps in our Dapp store, which I think represents a *general* solution to the problem of how best and most simply to curate information without any central form of authority *including the community*, because cryptoeconomics is not about egalitarianism, it is about designing systems with no central point of control. Decentralisation is the goal, egalitarianism is a great success metric. But not the way around, because egalitarianism is not a purely mathematical function that can be optimised.
 
 In the hope that I am right about idealism, and that it doesn't matter where this comes from (within or outside of Status) because ideas are what are really most powerful over a long enough period of time, and in the spirit of open source code, you can check out the pseudo code and the way I calculated the curve used [here](https://docs.google.com/spreadsheets/d/1V1EMpDtAa7pP9F968VBb3dc2GUOT_BmS7-dK_0kwSDw/edit?usp=sharing).
 
@@ -44,7 +44,7 @@ This is not a premature optimisation, it is the thing itself which makes it all 
 No! That's not the point of mechanism design as applied to cryptoeconomics. The point is to create systems that use mathematics and/or cryptography so that NO-ONE has undue influence over the system.
 It costs users to vote, so they would only do so to complain (if they feel really strongly), or donate to/protect an app that is being trolled. #EffectiveDirectCharity.
 
-2. The developer is incentivised by appearing higher in the registry, and by being able to receive back at least 52% (in this curve) of the SNT they staked if they get trolled, 
+2. The developer is incentivised by appearing higher in the Dapp store, and by being able to receive back at least 52% (in this curve) of the SNT they staked if they get trolled, 
 do something the community doesn't like resulting in downvotes, OR do something awesome that the community likes, and wants to donate to.
 Complaining and donating are the same economic signal with signs reversed, so we can treat them the same mathematically if we set things up correctly.
 
@@ -57,7 +57,7 @@ It's about curating, and we need to figure out the way to do that most optimally
 
 The point is that the contract represents *contractual reality*, to which we as Status are not bound, if we do not wish to be. 
 Code is *like* law, but even law is just the rules other people have made (people no better, nor any worse, than us).
-Status does not have to show the exact rankings in the registry. We can reserve the right to ban a DApp for 2, very specific, and falsifiable reasons:
+Status does not have to show the exact rankings in the Dapp store. We can reserve the right to ban a DApp for 2, very specific, and falsifiable reasons:
 
 1. Malicious code. Requires a link to code and proof of why it is malicious.
 2. Vote manipulation. Requires a blockchain proof of suspicious transactions.
@@ -82,16 +82,16 @@ This means the minimum cost to list a DApp (or any piece of information you migh
 
 **I'm a DApp developer. I'm going to stake my SNT, then buy back all the tokens I can and vote positively with them, for which I get the SNT used to vote as the developer anyway?**
 
-Yip, that's true. So, we need to ask, what is the maximum cost to a developer? In this set up it's the curve factor, 0.52. That is, for 52% of what it would actually have cost in SNT, I can get to the top of the registry and ensure no-one can vote against me. Read on...
+Yip, that's true. So, we need to ask, what is the maximum cost to a developer? In this set up it's ( 1 / `curve_factor` ), roughly 0.52 atm. That is, for 52% of what it would actually have cost in SNT, I can get to the top of the registry and ensure no-one can vote against me. Read on...
 This is why there is no incentive to upvote (other than to protect or donate). Positive votes don't influence your "effective" stake, only negative votes count.
 
 **Re-iterate:** upvoting is only a social signal for the UI, there is no contractual benefit. The only reason to upvote, other than protect/donate, is to increase how expensive it is (by decreasing % negative) to downvote your DApp by buying up tokens.
 You could call the contract yourself manually with the right data, upvote yourself massively and have the SNT come right back to you (one reason why only, say, 52% is available). 
 a) that's not actually optimal (because of the UI catch) and b) it's only about social signalling, so it's possible to prove that behaviour on the chain, and Status can block from the UI only 2 things: DApps that manipulate voting, or mailicious code.
-Hence you run the risk of spending 52% of the SNT required to top the registry and STILL being blocked in the UI. 
-Note "the SNT required to top the registry" above. This is the surest signal that the cryptoeconomic security of DApps on top of the registry is a purely a function of the total SNT staked
+Hence you run the risk of spending 52% of the SNT required to top the DApp store and STILL being blocked in the UI. 
+Note "the SNT required to top the dapp store" above. This is the surest signal that the cryptoeconomic security of DApps on top of the DApp store is a purely a function of the total SNT staked
 
-This is one way of casting the game being played: How much SNT is worth risking against the chance that the UI can divert from contractual reality under specific, well-defined conditions versus how much SNT do we need to return to make sure developers get back enough in order to make it worth their while to stake SNT in the first place? 
+This is one way of casting the game being played: How much SNT is worth risking against the chance that the UI can divert from contractual reality under specific, well-defined conditions versus how much SNT do we need to return to make sure developers get back enough in order to make it worth their while to stake SNT in the first place, which also effects how secure the DApp store is as a whole.? 
 
 **Is there any contractual rule about voting for yourself?**
 
@@ -104,4 +104,4 @@ they'll need to stake more and buy back votes too. Sounds like a better form of 
 
 All the while, more SNT goes into the cryptoeconomic security of the dapp store as a whole - **this is the key insight here**.
 
-Anti-social behaviour (trolling) and corporate competitiveness == community love in the form of both a more secure registry in this scheme and (potentially) higher SNT prices as there's less SNT in circulation ;)
+Anti-social behaviour (trolling) and corporate competitiveness == community love in the form of both a more secure Dapp store in this scheme and (potentially) higher SNT prices as there's less SNT in circulation ;)
