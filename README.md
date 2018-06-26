@@ -1,5 +1,19 @@
 # theStateOfUs
 
+The beauty of Ethereum to me, can be summed up simply:
+
+```
+By deploying immutable contracts to a shared, public computational surface - contracts whose data can be read deterministically by anyone with access to the internet - we can *encode idealism* into the way we run society.
+``` 
+
+What's more, **what's different this time**, is that the idealism exists independently of the people who encoded it, who inevitably become corrupted in some way, because we are all human. And to be human is to be corruptible, in some very real and simple way. 
+
+So, I have designed a pretty neat way to curate DApps in our registry, which I think represents a *general* solution to the problem of how best and most simply to curate information without any central form of authority *including the community*, because cryptoeconomics is not about egalitarianism, it is about designing system with no central point of control. Decentralisation is the goal, egalitarianism is a great success metric. But not the way around.
+
+In the hope that I am right about idealism, and that it doesn't matter where this comes from (within or outside of Status) because ideas are what are really most powerful over a long enough period of time, and in the spirit of open source code, you can check out the pseudo code and the way I calculated the curve used here:
+
+Even better, I don't think this would work if it were run as a closed source project, as it would result in insane benefits to early token holders of that particular token, which violates the "egalitarianism as a success metric". So, having done the leg work, making sure the idea starts out as open source is the last big piece to place.
+
 
 ## FAQs
 
