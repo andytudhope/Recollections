@@ -89,7 +89,7 @@ contract DAppStore {
             // =>_SNTBalance - (_effectiveBalance / curve) = 1
             // => _SNTBalance = _effectiveBalance * curve_factor
             // => or curve_factor = (_SNTBalance / _effectiveBalance)         
-            return num_tokens_to_mint = num_votes_to_mint + ((_SNTBalance / _effectiveBalance) * num_votes_to_mint_at_1);
+            return num_tokens_to_mint = num_votes_to_mint_at_1 + ((_SNTBalance / _effectiveBalance) * interval * num_votes_to_mint_at_1);
                      
             // And that's all she wrote. The other half is in downvote().
         }
