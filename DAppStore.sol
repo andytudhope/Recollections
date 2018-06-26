@@ -74,7 +74,11 @@ contract DAppStore {
             // We need to know the interval _SNTBalance is in and the number of tokens minted previously.
             // interval, for this curve, is just TOTAL_SNT * snt_percent, though.
             // This is why the interval and the rate must be functions only of the TOTAL_SNT.
-            // i.e. (1) the exponential => linear optimisation problem
+            
+             var current_interval_index = Math.round(_SNTBalance / (TOTAL_SNT * snt_percent));
+             // The Math.round trick is why it is important that the interval is defined as an arithmetic sequence.
+             
+            // Get the previous number of tokens, i.e. (1) the exponential => linear optimisation problem
             // How we parameterize our linearization of the exponential really matters
             // Done well, it results in the below:
             // % available = curve,
@@ -84,8 +88,13 @@ contract DAppStore {
             // =>_SNTBalance - (_effectiveBalance / curve) = 1
             // => _SNTBalance = _effectiveBalance * curve_factor
             // => or curve_factor = (_SNTBalance / _effectiveBalance)         
-            return num_tokens_to_mint = num_votes_to_mint_at_1 + ((_SNTBalance / _effectiveBalance) * num_votes_to_mint_at_1);
+            return num_tokens_to_mint = num_votes_to_mint_at_1 + ((_SNTBalance / _effectiveBalance) / current_interval_index * num_votes_to_mint_at_1);
                      
+            // Now, what is the relationship between the curve and the current_interval_index?
+            // Well the curve is an exponential one and when the _SNTBalance = interval_id_top we want
+            // num_tokens_to_mint = 0, meaning as _SNTBalance rises, we want it to decrease the effect 
+            // the interval has on the num_tokens_to_mint. 
+            // At a glance, we also require that _effectiveBalance is the numerator, because it can be zero, and we don't want to be dividing by 0.
             // And that's all she wrote. The other half is in downvote().
         }
     } 
