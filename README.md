@@ -25,13 +25,13 @@ The more SNT you stake to get higher in the overall rankings, the easier and che
 
 That is why we use a bonded curve (there is only one of them): to make minting votes progressively cheaper in an exponential way.
 
-However, coding exponentials is hard and expensive, and means we have to store each interval, which is also hard and expensive.
+However, coding exponentials is hard, and it means we have to store each interval, which is  expensive.
 So, we need to apply some factor that turns our exponential relationship between cost to mint and num votes minted into a linear one.
 Linear relationships are easy to code: they are just arithmetic sequences.
 So, we're looking for a factor that will turn exponential => linear.
 
 Casting the rate and the interval as functions of Total SNT means we can exclude them as variables, and just use an interval of Total SNT x Y % = interval. Which makes Y that factor which can be used to turn the exponential linear, so that we can code it cheaply.
-Which makes Y that factor which can be used to turn the exponential linear, so that we can code it cheaply.
+
 The `curve_factor` is the other important concept to grasp, but it's somewhat mystical and has to do with boundary problems and the exact way the algorithm is put together.
 
 **The need to linearize the exponential curves sounds like it comes only from that being hard to do in Ethereum? Aren't all of these things are just premature optimisations that we shouldn't need to be doing?**
@@ -50,8 +50,8 @@ Complaining and donating are the same economic signal with signs reversed, so we
 
 This is why this is not just a solution for a DappStore, but a general solution for curating information when there is some known bound to how that information is curated (here the Total SNT In Circulation).
 PageRank's big insight when the web got going was that sorting information effectively was more important than displaying it well, which is what everyone else was trying to do. 
-The big insight here is that, in the decentralized web, sorting information becomes hard because there is no central authority. 
-So it's not about sorting, it's about curating, and we need to figure out the way to do that most optimally - which is what this curve and contract are. (Maybe not most optimally, but close anyway).
+The big insight here is that, in the decentralized web, the simple fact that there is, by definition, no central authority means it's not about sorting at all. 
+It's about curating, and we need to figure out the way to do that most optimally - which is what this curve and contract are. (Maybe not most optimally, but close anyway).
 
 **I mean with a centralised authority bad apps get pulled immediately. If it's decentralised the curve has to kick in first, right? Isn't that a problem/too slow?**
 
@@ -65,7 +65,7 @@ Status does not have to show the exact rankings in the registry. We can reserve 
 **So in the current model only the developer can stake? Or is there an option for others to participate as well?**
 
 Yeah, of course! Anyone can stake, and we provide the option in the UI. When you chose to upvote, it's either "Promote and protect" == staking more
-or "Community love" meaning minting positive votes and sending a portion of that SNT to the developer. 
+or "Community love" == minting positive votes and sending a portion of that SNT to the developer. 
 A portion that relies only on the params of the curve being used to protect the integrity of the store as a whole.
 
 **Is it possible to pump and dump an app?**
@@ -75,7 +75,7 @@ Anyway, dropping the rankings just means the developer is getting potentially ha
 
 **Will our minimum stake for the developer be dynamic based on the total curve, or by some fixed _fiat_ value?**
 
-No minimum stake if you look at the contract. Anyone can create a DApp, with or without tokens.
+There is no minimum stake if you look at the contract. Anyone can create a DApp, with or without tokens.
 However, if you send tokens along with the call to create the Dapp (not sure how to do this yet, maybe a proxy with `approveAndTransfer` somehow?)
 then that dapp is created with a starting balance, which is - again - what is used to rank it, whatever that starting balance is (even if 0).
 This means the minimum cost to list a DApp (or any piece of information you might like) is only the gas costs of creating a new struct in a contract (i.e. very low)
