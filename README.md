@@ -36,9 +36,9 @@ The `curve_factor` is the other important concept to grasp, but it's somewhat my
 
 **The need to linearize the exponential curves sounds like it comes only from that being hard to do in Ethereum? Aren't all of these things are just premature optimisations that we shouldn't need to be doing?**
 
-This is not a premature optimisation, it is the thing itself which makes it all work, because the rate and interval are set as functions of TOTAL SNT and we just optimise the 2 constants parameterising things that way gives us.
+Linearization is not a premature optimisation, it is the thing itself which makes it all work, because the rate and interval are set as functions of TOTAL SNT and we just optimise the 2 constants parameterising things that way gives us.
 
-**OK, explain the incentives to me on the contract in terms of 1.) the user of the app 2.) the developer**
+**OK, explain the incentives to me on the contract in terms of 1.) the user of the app 2.) the developer?**
 
 1. The user of the app - NO INCENTIVES, this is the sociological factor that makes it all work. People are always saying "We need to get the community more involved! Let's incentivise them to curate information FOR us, so we don't have to do it".
 No! That's not the point of mechanism design as applied to cryptoeconomics. The point is to create systems that use mathematics and/or cryptography so that NO-ONE has undue influence over the system.
@@ -80,9 +80,9 @@ However, if you send tokens along with the call to create the Dapp (not sure how
 then that dapp is created with a starting balance, which is - again - what is used to rank it, whatever that starting balance is (even if 0).
 This means the minimum cost to list a DApp (or any piece of information you might like) is only the gas costs of creating a new struct in a contract (i.e. very low)
 
-**I'm a DApp developer. I'm going to stake my SNT, then buy back all the tokens I can and vote positively with them, for which I get the SNT used to vote as the developer anyway?**
+**I'm a DApp developer. I'm going to stake my SNT, then buy back all the tokens I can and vote positively with them, for which I get the SNT used to vote, because I'm the developer?**
 
-Yip, that's true. So, we need to ask, what is the maximum cost to a developer? In this set up it's ( 1 / `curve_factor` ), roughly 0.52. That is, for 52% of what it would actually have cost in SNT, I can get to the top of the DApp store and ensure no-one can vote against me. Read on...
+Yip, that's true. So, we need to ask, what is the maximum cost to a developer to rank first? In this set up it's ( 1 / `curve_factor` ), roughly 0.52. That is, for 52% of what it would actually have cost in SNT, I can get to the top of the DApp store and ensure no-one can vote against me. Read on...
 This is why there is no incentive to upvote (other than to protect or donate). Positive votes don't influence your "effective" stake, only negative votes count.
 
 **Re-iterate:** upvoting is only a social signal for the UI, there is no contractual benefit. The only reason to upvote, other than protect/donate, is to increase how expensive it is (by decreasing % negative) to downvote your DApp by buying up tokens.
