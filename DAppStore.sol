@@ -91,7 +91,7 @@ contract DAppStore {
             
             // Need to prove curve_factor's relationship to this sequence. It's multiplicative on the dominant term
             // in the arithmetic sequence. 1 / curve_factor == curve, so this is just the curve at the current interval.
-            return num_tokens_to_mint = num_votes_to_mint_at_1 + ((current_interval_index / curve_factor) * num_votes_to_mint_at_1);
+            return num_votes_to_mint = num_votes_to_mint_at_1 + ((current_interval_index / curve_factor) * num_votes_to_mint_at_1);
                      
             // And that's all she wrote. The other half is in downvote().
         }
