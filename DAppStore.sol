@@ -80,18 +80,16 @@ contract DAppStore {
              // The Math.round trick is why it is important that the interval is defined as an arithmetic sequence.
              
             // Get the previous number of tokens, i.e. (1) the exponential => linear optimisation problem
-            // This is the clearest description I can give of why we need to make the exponential curve linear 
-            // (which we can do neatly with only 2 params, percent_snt and TOTAL_SNT): 
-            // It's so that we don't have to loop through anything to get the answer here. It's SUPER cheap.
-            // If I'm right, we can use a simple arithmetic sequence after calculating
-            // the num_votes_to_mint_at_1 as a "good enough" proxy.
-            // We need "good" to be definable though, so we define it as the intersection of cost to mint and num_votes_minted
-            // We try to maximise the x-value of that within the constraints set up by the other 2 problems and voila 
-            // i.e. (3) the optimisation problem that removes human judgement about the % available of the staked SNT
-            
-            // Need to prove curve_factor's relationship to this sequence. It's multiplicative on the dominant term
-            // in the arithmetic sequence. 1 / curve_factor == curve, so this is just the curve at the current interval.
-            return num_votes_to_mint = num_votes_to_mint_at_1 + ((current_interval_index / curve_factor) * num_votes_to_mint_at_1);
+            // How we parameterize our linearization of the exponential really matters
+            // Done well, it results in the below:
+            // % available = curve,
+            // % available =_SNTBalance * curve - % negative, and
+            // % negative = _effectiveBalance
+            // => _SNTBalance * curve - effectiveBalance = curve
+            // =>_SNTBalance - (_effectiveBalance / curve) = 1
+            // => _SNTBalance = _effectiveBalance * curve_factor
+            // => or curve_factor = (_SNTBalance / _effectiveBalance)         
+            return num_tokens_to_mint = num_votes_to_mint + ((_SNTBalance / _effectiveBalance) * num_votes_to_mint_at_1);
                      
             // And that's all she wrote. The other half is in downvote().
         }
