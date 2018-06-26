@@ -82,7 +82,7 @@ This means the minimum cost to list a DApp (or any piece of information you migh
 
 **I'm a DApp developer. I'm going to stake my SNT, then buy back all the tokens I can and vote positively with them, for which I get the SNT used to vote as the developer anyway?**
 
-Yip, that's true. So, we need to ask, what is the maximum cost to a developer? In this set up it's ( 1 / `curve_factor` ), roughly 0.52 atm. That is, for 52% of what it would actually have cost in SNT, I can get to the top of the registry and ensure no-one can vote against me. Read on...
+Yip, that's true. So, we need to ask, what is the maximum cost to a developer? In this set up it's ( 1 / `curve_factor` ), roughly 0.52. That is, for 52% of what it would actually have cost in SNT, I can get to the top of the DApp store and ensure no-one can vote against me. Read on...
 This is why there is no incentive to upvote (other than to protect or donate). Positive votes don't influence your "effective" stake, only negative votes count.
 
 **Re-iterate:** upvoting is only a social signal for the UI, there is no contractual benefit. The only reason to upvote, other than protect/donate, is to increase how expensive it is (by decreasing % negative) to downvote your DApp by buying up tokens.
