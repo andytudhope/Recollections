@@ -88,14 +88,14 @@ contract DAppStore {
             // =>_SNTBalance - (_effectiveBalance / curve) = 1
             // => _SNTBalance = _effectiveBalance * curve_factor
             // => or curve_factor = (_SNTBalance / _effectiveBalance)         
-            return num_tokens_to_mint = num_votes_to_mint_at_1 + ((_SNTBalance / _effectiveBalance) / current_interval_index * num_votes_to_mint_at_1);
+            return num_tokens_to_mint = num_votes_to_mint_at_1 + ((_SNTBalance / _effectiveBalance) * current_interval_index * num_votes_to_mint_at_1);
                      
-            // Now, what is the relationship between the curve and the current_interval_index?
-            // Well the curve is an exponential one and when the _SNTBalance = interval_id_top we want
-            // num_tokens_to_mint = 0, meaning as _SNTBalance rises, we want it to decrease the effect 
-            // the interval has on the num_tokens_to_mint. 
-            // At a glance, we also require that _effectiveBalance is the numerator, because it can be zero, and we don't want to be dividing by 0.
-            // And that's all she wrote. The other half is in downvote().
+            // Why are the curve and the current_interval_index multiplied together?
+            // One way of intuiting it is that we have to ask which of those two values, 
+            // _SNTBalance or _effectivebalance will ever be zero. if either? And we want to make sure that anyone can
+            // create a new struct in the DApp store, because the whole point is to be radically open, with 
+            // no single point of control, so _SNTBalance can definitely be a zero in our game.
+            // Therefore, we require that _SNTBalance is the numerator, because it can be zero, and we don't want to be dividing by 0.
         }
     } 
     
