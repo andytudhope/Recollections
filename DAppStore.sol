@@ -23,7 +23,6 @@ contract DAppStore {
     // Consult spreadsheet for these 3 values
     uint256 public TOTAL_SNT = 3,470,483,788;
     uint256 public percent_snt = 0.000001;
-    uint256 public curve_factor = 1.91;
     
     // You can only mint "votes" by expressing an opinion.
     // NB: with the curve I've designed, I'd rather use the word "vote" to play this game clearly with. 
