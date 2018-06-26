@@ -48,6 +48,7 @@ contract DAppStore {
         // I've written msg.data.tokens everywhere. Yes, I know that's not a thing.
         // It will have to be approveAndTransfers of SNT in the real contract, I just didn't want that mess here for now.
         // The id is shared out of band through the `Optimised for Status` program, along with the SNT to stake.
+        require(msg.data.tokens > 0); // explained in the costToMint() function
         _developer = msg.sender;
         dapp.category = _category;
         dapp.name = _name;
@@ -90,12 +91,14 @@ contract DAppStore {
             // => or curve_factor = (_SNTBalance / _effectiveBalance)         
             return num_tokens_to_mint = num_votes_to_mint_at_1 + ((_SNTBalance / _effectiveBalance) * current_interval_index * num_votes_to_mint_at_1);
                      
-            // Why are the curve and the current_interval_index multiplied together?
+            // Why are the curve and the current_interval_index inversely related?
             // One way of intuiting it is that we have to ask which of those two values, 
-            // _SNTBalance or _effectivebalance will ever be zero. if either? And we want to make sure that anyone can
-            // create a new struct in the DApp store, because the whole point is to be radically open, with 
-            // no single point of control, so _SNTBalance can definitely be a zero in our game.
-            // Therefore, we require that _SNTBalance is the numerator, because it can be zero, and we don't want to be dividing by 0.
+            // _SNTBalance or _effectivebalance will ever be zero. if either? And we know _effectiveBalance can be zero:
+            // it's simply when there have been no negative votes. However, it does mean that 
+            // _SNTBalance will need to be set to something, i.e. there is a need to set the balance, 
+            // otherwise the code breaks at 0, not because we want to charge anything.
+            // That's just a simple check in the contract, and it can be 1 SNT, for instance, to make it cheap for anyone to create a new struct in the DApp store, because the whole point is to be radically open, with no single point of control.
+            // Therefore, we require that _effectiveBalance is the numerator, because it can be zero, and we don't want to be dividing by 0.
         }
     } 
     
