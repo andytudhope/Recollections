@@ -89,7 +89,7 @@ contract DAppStore {
             // =>_SNTBalance - (_effectiveBalance / curve) = 1
             // => _SNTBalance = _effectiveBalance * curve_factor
             // => or curve_factor = (_SNTBalance / _effectiveBalance)         
-            return num_tokens_to_mint = num_votes_to_mint_at_1 + ((_SNTBalance / _effectiveBalance) * current_interval_index * num_votes_to_mint_at_1);
+            return num_tokens_to_mint = num_votes_to_mint_at_1 + ((_SNTBalance / _effectiveBalance) / current_interval_index * num_votes_to_mint_at_1);
                      
             // Why are the curve and the current_interval_index inversely related?
             // One way of intuiting it is that we have to ask which of those two values, 
