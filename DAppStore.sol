@@ -106,7 +106,7 @@ contract DAppStore {
     
     function costOfMinting(uint256 _SNT) public view returns(uint256) {
         // Used in UI to calculate fees
-        return numVotesToMintCurve(_SNT);
+        return numVotesToMint(_SNT);
     }
     
     function stake() public {

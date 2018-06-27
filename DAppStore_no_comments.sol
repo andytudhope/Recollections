@@ -50,7 +50,7 @@ contract DAppStore {
     } 
     
     function costOfMinting(uint256 _SNT) public view returns(uint256) {
-        return numVotesToMintCurve(_SNT);
+        return numVotesToMint(_SNT);
     }
     
     function stake() public {
