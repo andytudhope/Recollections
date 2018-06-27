@@ -97,7 +97,9 @@ contract DAppStore {
             // it's simply when there have been no negative votes. However, it does mean that 
             // _SNTBalance will need to be set to something, i.e. there is a need to set the balance, 
             // otherwise the code breaks at 0, not because we want to charge anything.
-            // That's just a simple check in the contract, and it can be 1 SNT, for instance, to make it cheap for anyone to create a new struct in the DApp store, because the whole point is to be radically open, with no single point of control.
+            // That's just a simple check in the contract, and it is just SNT > 0, 
+            // to make it cheap for anyone to create a new struct in the DApp store, because the whole point is to be radically open, 
+            // with no single point of control.
             // Therefore, we require that _effectiveBalance is the numerator, because it can be zero, and we don't want to be dividing by 0.
         }
     } 
