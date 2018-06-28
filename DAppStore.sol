@@ -85,26 +85,17 @@ contract DAppStore {
             // Get the previous number of tokens, i.e. (1) the exponential => linear optimisation problem
             // How we parameterize our linearization of the exponential really matters
             // Done well, it results in the below:
-            // % available = curve,
-            // % available =_SNTBalance * curve - % negative, and
-            // % negative = _effectiveBalance
-            // => _SNTBalance * curve - effectiveBalance = curve
-            // =>_SNTBalance - (_effectiveBalance / curve) = 1
-            // => _SNTBalance = _effectiveBalance * curve_factor
-            // => or curve_factor = (_SNTBalance / _effectiveBalance)         
-            return num_tokens_to_mint = num_votes_to_mint_at_1 + (current_interval_index + ( _effectiveBalance / _SNTBalance)) * num_votes_to_mint_at_1);
-                     
-            // We know we want the interval and the curve to affect the significant term of the arithmetic sequence, 
-            // as the parameterisation above requires it, but how are they related? 
-            // My intuition is that it is `((interval + curve) * current_interval_index)`. 
-            // The reason it is `+` is because _effectiveBalance is a negative value, so this will actually decrease 
-            // the multiplier of the arithmetic sequence, which is what we want - it needs to be more expensive to mint votes 
-            // the more votes have already been cast
-            // One way of intuiting it is realising that, yes, _effectiveBalance can be 0 for a lot of reasons. 
-            // _SNTBalance can only be zero initially.
-            // We want anyone to be able to create a DApp, but we don't want to divide by 0. 
-            // The key here is to realise that the `curve_factor` only *comes into existence* 
-            // when the struct has a _SNTBalance > 0, otherwise the num_tokens_to_mint == 0. 
+            // `% staked available = % available - %negative = curve` is what we enforce, 
+            // `% available =(_SNTBalance * curve) / 100`, and
+            // `% negative == _effectiveBalance` by looking at the boundary conditions. 
+            // `((_SNTBalance * curve) / 100 ) - effectiveBalance = % staked available = curve`
+            // ` (_SNTBalance/100) - (_effectiveBalance / curve) = 1`
+            // `(_SNTBalance/100) - (1 / _effectiveBalance) = 1 / curve`
+            // `or curve_factor = (_SNTBalance/100) - (1 / _effectiveBalance)`
+
+            // We know we want the interval and the curve to affect the significant term of the arithmetic sequence, as the parameterisation above requires it, but how are they related? My intuition is that it is `((interval * curve) * current_interval_index)`. The reason it is `*` is because as _effectiveBalance is gets bigger and bigger (more votes are cast), we need to mint less votes (i.e. it needs to be more expensive).
+            // `num_tokens_to_mint = num_votes_to_mint_at_1 + ((current_interval_index * curve_factor) * num_votes_to_mint_at_1);` which is the same as:         
+            return num_tokens_to_mint = num_votes_to_mint_at_1 + (current_interval_index * ((SNTBalance/100) - (1 / _effectiveBalance)) * num_votes_to_mint_at_1);
         }
     } 
     
