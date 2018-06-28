@@ -123,11 +123,11 @@ I like the ideas a lot, but my concern is less from an economic standpoint than 
 
 In my proposal, it's all very simple.
 
-The developer **knows** that, in order to get onto the first page, they need to stake X amount, of which they can receive back a % defined only by the curve (i.e. the abstract mathematical structure) on which the game is based. They can also withdraw that (entire) stake and leave the ranking system at any time, should they so like, which I think is important, being something a voluntarist, in addition to a fan of decentralisation.
+The developer **knows** that, in order to get onto the first page, they need to stake X amount, of which they can receive back a % defined only by the curve (i.e. the abstract mathematical structure) on which the game is based. They can also withdraw that (entire) stake and leave the ranking system at any time, should they so like, which I think is important, being something of a voluntarist, in addition to a fan of decentralisation.
 
 The user **knows** that the information/products/services they are seeing are those that have provided most *literal* value to the system in which they're being ranked, because staking funds locks up a certain % of those funds (for as long as that info/product/service is ranked), which decreases the total amount of tokens in circulation, driving up demand and prices, and - again, quite literally - providing value to the community of token holders.
 
-That is, using the system (I mean this as in simply using it to search, as we currently use Google) IS THE INCENTIVE for users, because they get to hold tokens that BOTH tend to go up in value the more value is used to rank information AND which can be used to influence directly the actual rankings.
+That is, using the system (I mean this as in simply using it to search, as we currently use Google) IS THE INCENTIVE for users, because they get to hold tokens that BOTH tend to go up in value the more value is used to rank information AND which can be used to influence directly the actual rankings. (But, only if they really choose to hold those tokens - using the system in no way requires it, which is also important.)
 
 **The QV thing is a lot of fun because it makes people really creates a nice trade-off that makes people think about how strongly they feel about things.**
 

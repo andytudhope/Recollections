@@ -17,7 +17,7 @@ Even better, I don't think this would work if it were run as a closed source pro
 
 ## Can you give a maximally simple description of (1) who the participants are, (2) what actions the different categories of participants can take and (3) what the incentives are?
 
-DApps are ranked by whoever has staked the most, it is as simple as that. With one, small twist: the more you stake to get ranked highly, the easier it is fr anyone to influence that position.
+DApps are ranked by whoever has staked the most, it is as simple as that. With one, small twist: the more you stake to get ranked highly, the easier it is for anyone to influence that position.
 
 1. Participants are developers who want to see their DApp get ranked highly so people use it.
 
