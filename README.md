@@ -15,9 +15,24 @@ Even better, I don't think this would work if it were run as a closed source pro
 
 # How It Works
 
-## Can you give a maximally simple description of (1) who the participants are, (2) what actions the different categories of participants can take and (3) what the incentives are?
-
 DApps are ranked by whoever has staked the most, it is as simple as that. With one, small twist: the more you stake to get ranked highly, the easier it is for anyone to influence that position.
+
+Picture this, if you will. As a user, I go the DApp Store tab in Status and see the first page full of awesome DApps. I do not need SNT, I do not even need to know what SNT is, to do this.
+
+Next to each DApp, I can see a `Staked SNT` amount, so I can tell exactly who has staked what to get that place in the rankings. And I know that part of that stake, defined by some verifiable maths I don't need to understand, is held for as long as the DApp wants to be a part of the Status DApp Store, which means there is less SNT is circulation, which means my SNT is worth more, so I am happy because the DApps that appear at the top are - quite literally - providing me with value. 
+
+Even if indirectly, it is still a better metric that "downloads", or "stars", or "views" or any other suboptimal and easy=to-manipulate social metric like that.
+
+Now, if I really like, or don't like, that DApp, I can choose to vote, which costs me some SNT. 
+
+1. Each downvote I cast equates to -1 SNT from the balance of the DApp in the rankings. These get progressively more expensive to mint, and can only subtract up to roughly half of the balance that DApp staked. Remember though, that the more they have staked in total, the cheaper these votes are to mint, which results in a nice equilibrium.
+2. Each upvote has one of 2 results, split up in the UI:
+    1. I literally upvote, which has no effect on the balance of the DApp in the store, but makes it more expensive for others to downvote.
+    2. I stake some SNT to the DApp as a donation (which is obviously much more expensive than just voting). Staking does obviously effect the balance shown in the store.
+
+And that's it. Developers know exactly what they need to stake to rank highly, users know exactly who has staked what to show up where they do AND they can choose to influence that position if they feel strongly enough to back that up with some value of their own (which goes back to the developers to close entirely this virtuous feedback loop).
+
+## Can you give a maximally simple description of (1) who the participants are, (2) what actions the different categories of participants can take and (3) what the incentives are?
 
 1. Participants are developers who want to see their DApp get ranked highly so people use it.
 
