@@ -129,6 +129,6 @@ The user **knows** that the information/products/services they are seeing are th
 
 That is, using the system (I mean this as in simply using it to search, as we currently use Google) IS THE INCENTIVE for users, because they get to hold tokens that BOTH tend to go up in value the more value is used to rank information AND which can be used to influence directly the actual rankings. (But, only if they really choose to hold those tokens - using the system in no way requires it, which is also important.)
 
-**The QV thing is a lot of fun because it makes people really creates a nice trade-off that makes people think about how strongly they feel about things.**
+**The QV thing is a lot of fun because it creates a nice trade-off that makes people think about how strongly they feel about things.**
 
 I think that we may disagree a little on the psychological question of whether people like having to think about how strongly they feel about things or not. (He said, blithely taking a plunge into yet another field he was no expert in ;)
