@@ -19,9 +19,9 @@ DApps are ranked by whoever has staked the most, it is as simple as that. With o
 
 Picture this, if you will. As a user, I go the DApp Store tab in Status and see the first page full of awesome DApps. I do not need SNT, I do not even need to know what SNT is, to do this.
 
-Next to each DApp, I can see a `Staked SNT` amount, so I can tell exactly who has staked what to get that place in the rankings. And I know that part of that stake, defined by some verifiable maths I don't need to understand, is held for as long as the DApp wants to be a part of the Status DApp Store, which means there is less SNT is circulation, which means my SNT is worth more, so I am happy because the DApps that appear at the top are - quite literally - providing me with value. 
+Next to each DApp, I can see a `Staked SNT` amount, so I can tell exactly who has staked what to get that place in the rankings. And I know that part of that stake, defined by some verifiable maths I don't need to understand, is held for as long as the DApp wants to be a part of the Status DApp Store. Which means there is less SNT is circulation, which means my SNT is worth more, so I am happy because the DApps that appear at the top are - quite literally - providing me with value. 
 
-Even if indirectly, it is still a better metric that "downloads", or "stars", or "views" or any other suboptimal and easy=to-manipulate social metric like that.
+Even if indirectly, it is still a better metric that "downloads", or "stars", or "views" or any other suboptimal and easy-to-manipulate social metric like that.
 
 Now, if I really like, or don't like, that DApp, I can choose to vote, which costs me some SNT. 
 
