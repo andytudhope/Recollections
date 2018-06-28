@@ -41,7 +41,7 @@ contract DAppStore {
     function numVotesToMint(uint256 _SNTBalance) internal returns(uint256) {  
         if (_SNTBalance <= TOTAL_SNT * snt_percent) {
             var num_votes_to_mint_at_1 = (1 / percent_snt); 
-            return num_votes_to_mint; 
+            return num_votes_to_mint_at_1; 
         }     
         if (_SNTBalance > TOTAL_SNT * snt_percent) {
             var current_interval_index = Math.round(_SNTBalance / (TOTAL_SNT * snt_percent));         

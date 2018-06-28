@@ -71,7 +71,7 @@ contract DAppStore {
             // If there is less staked than the first interval, this needs to reflect F2
             // Needs to be interval / rate, but rate = interval * percent_snt
             var num_votes_to_mint_at_1 = (1 / percent_snt); 
-            return num_votes_to_mint; 
+            return num_votes_to_mint_at_1; 
         }
          
         if (_SNTBalance > TOTAL_SNT * snt_percent) {
