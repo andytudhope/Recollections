@@ -85,16 +85,16 @@ contract DAppStore {
             // Get the previous number of tokens, i.e. (1) the exponential => linear optimisation problem
             // How we parameterize our linearization of the exponential really matters
             // Done well, it results in the below:
-            // `% staked available = % available - %negative = curve` is what we enforce, 
-            // `% available =(_SNTBalance * curve) / 100`, and
+            // `% staked available = % available - %negative = rate` is what we enforce, 
+            // `% available =(_SNTBalance * rate) / 100`, and
             // `% negative == _effectiveBalance` by looking at the boundary conditions. 
-            // `((_SNTBalance * curve) / 100 ) - effectiveBalance = % staked available = curve`
-            // ` (_SNTBalance/100) - (_effectiveBalance / curve) = 1`
-            // `(_SNTBalance/100) - (1 / _effectiveBalance) = 1 / curve`
-            // `or curve_factor = (_SNTBalance/100) - (1 / _effectiveBalance)`
+            // `((_SNTBalance * rate) / 100 ) - effectiveBalance = % staked available = curve`
+            // ` (_SNTBalance/100) - (_effectiveBalance / rate) = 1`
+            // `(_SNTBalance/100) - (1 / _effectiveBalance) = 1 / rate`
+            // `or rate = (_SNTBalance/100) - (1 / _effectiveBalance)`
 
             // We know we want the interval and the curve to affect the significant term of the arithmetic sequence, as the parameterisation above requires it, but how are they related? My intuition is that it is `((interval * curve) * current_interval_index)`. The reason it is `*` is because as _effectiveBalance is gets bigger and bigger (more votes are cast), we need to mint less votes (i.e. it needs to be more expensive).
-            // `num_tokens_to_mint = num_votes_to_mint_at_1 + ((current_interval_index * curve_factor) * num_votes_to_mint_at_1);` which is the same as:         
+            // `num_tokens_to_mint = num_votes_to_mint_at_1 + ((current_interval_index * rate) * num_votes_to_mint_at_1);` which is the same as:         
             return num_tokens_to_mint = num_votes_to_mint_at_1 + (current_interval_index * ((SNTBalance/100) - (1 / _effectiveBalance)) * num_votes_to_mint_at_1);
         }
     } 
