@@ -45,7 +45,7 @@ contract DAppStore {
         }     
         if (_SNTBalance > TOTAL_SNT * snt_percent) {
             var current_interval_index = Math.round(_SNTBalance / (TOTAL_SNT * snt_percent));         
-            return num_tokens_to_mint = num_votes_to_mint_at_1 + (current_interval_index * ((SNTBalance/100) - (1 / _effectiveBalance)) * num_votes_to_mint_at_1);
+            return num_tokens_to_mint = num_votes_to_mint_at_1 + (current_interval_index * (((SNTBalance/100) - 1) / _effectiveBalance)) * num_votes_to_mint_at_1);
         }
     } 
     
