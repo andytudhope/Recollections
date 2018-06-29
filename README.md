@@ -21,11 +21,11 @@ Picture this, if you will. As a user, I go the DApp Store tab in Status and see 
 
 Next to each DApp, I can see a `Staked SNT` amount, so I can tell exactly who has staked what to get that place in the rankings. And I know that part of that stake, defined by some verifiable maths I don't need to understand, is held for as long as the DApp wants to be a part of the Status DApp Store. Which means there is less SNT is circulation, which means my SNT is worth more, so I am happy because the DApps that appear at the top are - quite literally - providing me with value. 
 
-Even if indirectly, it is still a better metric that "downloads", or "stars", or "views" or any other suboptimal and easy-to-manipulate social metric like that.
+Even if indirectly, it is still a better metric that "downloads", or "stars", or "views" or any other suboptimal and easy-to-manipulate "social" metric.
 
 Now, if I really like, or don't like, that DApp, I can choose to vote, which costs me some SNT. 
 
-1. Each downvote I cast equates to -1 SNT from the balance of the DApp in the rankings. These get progressively more expensive to mint, and can only subtract up to roughly half of the balance that DApp staked. Remember though, that the more the DApp has staked in total, the cheaper these votes are to mint, which results in a nice equilibrium.
+1. Each downvote I cast equates to `-1 SNT` from the balance of the DApp in the rankings. These get progressively more expensive to mint, and can only subtract up to roughly half of the balance that DApp staked. Remember though, that the more the DApp has staked in total, the cheaper these votes are to mint, which results in a nice equilibrium.
 2. Each upvote has one of 2 results, split up in the UI:
     1. I literally upvote, which has no effect on the balance of the DApp in the store, but makes it more expensive for others to downvote and acts as a "donation" to the developer.
     2. I stake some SNT to the DApp to "protect or promote" it (which is obviously much more expensive than just voting). Staking does effect the balance shown in the store.
