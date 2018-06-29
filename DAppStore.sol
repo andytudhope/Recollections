@@ -88,12 +88,14 @@ contract DAppStore {
             // `% staked available = % available - %negative = rate` is what we enforce, 
             // `% available =(_SNTBalance * rate) / 100`, and
             // `% negative == _effectiveBalance` by looking at the boundary conditions. 
-            // `((_SNTBalance * rate) / 100 ) - effectiveBalance = % staked available = curve`
+            // `((_SNTBalance * rate) / 100 ) - effectiveBalance = % staked available = rate`
             // ` (_SNTBalance/100) - (_effectiveBalance / rate) = 1`
             // `(_SNTBalance/100) - (1 / _effectiveBalance) = 1 / rate`
             // `or rate = (_SNTBalance/100) - (1 / _effectiveBalance)`
 
-            // We know we want the interval and the curve to affect the significant term of the arithmetic sequence, as the parameterisation above requires it, but how are they related? My intuition is that it is `((interval * curve) * current_interval_index)`. The reason it is `*` is because as _effectiveBalance is gets bigger and bigger (more votes are cast), we need to mint less votes (i.e. it needs to be more expensive).
+            // We know we want the interval and the curve to affect the significant term of the arithmetic sequence, as the parameterisation above requires it, but how are they related? 
+            // My intuition is that it is `((interval * rate) * current_interval_index)`. The reason it is `*` is because as _effectiveBalance gets bigger and bigger (more votes are cast), 
+            // we need to mint less votes (i.e. it needs to be more expensive).
             // `num_tokens_to_mint = num_votes_to_mint_at_1 + ((current_interval_index * rate) * num_votes_to_mint_at_1);` which is the same as:         
             return num_tokens_to_mint = num_votes_to_mint_at_1 + (current_interval_index * ((SNTBalance/100) - (1 / _effectiveBalance)) * num_votes_to_mint_at_1);
         }
