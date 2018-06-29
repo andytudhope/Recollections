@@ -25,10 +25,10 @@ Even if indirectly, it is still a better metric that "downloads", or "stars", or
 
 Now, if I really like, or don't like, that DApp, I can choose to vote, which costs me some SNT. 
 
-1. Each downvote I cast equates to -1 SNT from the balance of the DApp in the rankings. These get progressively more expensive to mint, and can only subtract up to roughly half of the balance that DApp staked. Remember though, that the more they have staked in total, the cheaper these votes are to mint, which results in a nice equilibrium.
+1. Each downvote I cast equates to -1 SNT from the balance of the DApp in the rankings. These get progressively more expensive to mint, and can only subtract up to roughly half of the balance that DApp staked. Remember though, that the more the DApp has staked in total, the cheaper these votes are to mint, which results in a nice equilibrium.
 2. Each upvote has one of 2 results, split up in the UI:
-    1. I literally upvote, which has no effect on the balance of the DApp in the store, but makes it more expensive for others to downvote.
-    2. I stake some SNT to the DApp as a donation (which is obviously much more expensive than just voting). Staking does obviously effect the balance shown in the store.
+    1. I literally upvote, which has no effect on the balance of the DApp in the store, but makes it more expensive for others to downvote and acts as a "donation" to the developer.
+    2. I stake some SNT to the DApp to "protect or promote" it (which is obviously much more expensive than just voting). Staking does effect the balance shown in the store.
 
 And that's it. Developers know exactly what they need to stake to rank highly, users know exactly who has staked what to show up where they do AND they can choose to influence that position if they feel strongly enough to back that up with some value of their own (which goes back to the developers to close entirely this virtuous feedback loop).
 
