@@ -99,7 +99,6 @@ contract DAppStore {
             // We know we want the interval and the curve to affect the significant term of the arithmetic sequence, as the parameterisation above requires it, but how are they related? 
             // My intuition is that it is `((interval * rate) * current_interval_index)`. The reason it is `*` is because as _effectiveBalance gets bigger and bigger (more votes are cast), 
             // we need to mint less votes (i.e. it needs to be more expensive).
-            // To be clear, it is the absolute value of _effectiveBalance that we use, due to the boundary value problem above.
             // `num_tokens_to_mint = num_votes_to_mint_at_1 + ((current_interval_index * rate) * num_votes_to_mint_at_1);` which is the same as:         
             return num_tokens_to_mint = num_votes_to_mint_at_1 + (current_interval_index * (((SNTBalance/100) - 1) / _effectiveBalance)) * num_votes_to_mint_at_1);
         }
