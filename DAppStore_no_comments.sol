@@ -60,7 +60,6 @@ contract DAppStore {
     function upvote() public {
         var dappvotes = numVotesToMint(msg.data.tokens);
         mint(dappvotes, true);
-        // Upvoting == donating to the developer, and makes it more expensive to vote further
         send(msg.data.tokens);
     }
     
@@ -71,9 +70,6 @@ contract DAppStore {
         var negative_votes_now = effectiveBalance + dappvotes;
         var negative_percent = ((negative_votes_now - negative_votes_before) / negative_votes_now ) * 100
        _effectiveBalance -= negative_percent;
-       // Downvoting affects the _effectiveBalance, and it's important to burn the SNT
-       // Otherwise devs could stake bad/malicious apps, get money back as the community
-       // downvotes them and then withdraw their stake having made a tidy profit.
        burn(msg.data.tokens);
     }
     
