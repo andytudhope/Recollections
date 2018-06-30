@@ -60,7 +60,7 @@ contract DAppStore {
     function upvote() public {
         var dappvotes = numVotesToMint(msg.data.tokens);
         mint(dappvotes, true);
-        send(msg.data.tokens);
+        burn(msg.data.tokens);
     }
     
     function downVote() public {
@@ -70,13 +70,13 @@ contract DAppStore {
         var negative_votes_now = effectiveBalance + dappvotes;
         var negative_percent = ((negative_votes_now - negative_votes_before) / negative_votes_now ) * 100
        _effectiveBalance -= negative_percent;
-       send(msg.data.tokens);
+       burn(msg.data.tokens);
     }
     
     function withdrawStake(uint256 _amount) public {
         if(msg.sender == developer && _amount <= SNTBalance) {
             SNTBalance -= _amount;
-            send(_amount);
+            send(_developer, _amount);
         }
     }
     
@@ -84,7 +84,7 @@ contract DAppStore {
         votes.push(Vote(_amount, _positive));
     }
     
-    function send(uint256 _amount) internal {
-        send(_developer, _amount);
+    function burn(uint256 _amount) internal {
+        send(0x0, _amount);
     }
 }

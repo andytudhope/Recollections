@@ -125,8 +125,8 @@ contract DAppStore {
         var dappvotes = numVotesToMint(msg.data.tokens);
         // Pay SNT to promote
         mint(dappvotes, true);
-        // Send the SNT to the developer
-        send(msg.data.tokens);
+        // Burn the SNT
+        burn(msg.data.tokens);
     }
     
     function downVote() public {
@@ -134,8 +134,8 @@ contract DAppStore {
         var dappvotes = numVotesToMint(msg.data.tokens);
         // Pay SNT to complain 
        mint(dappvotes, false);
-       // Send the SNT to the developer
-       send(msg.data.tokens);
+       // Burn the SNT
+       burn(msg.data.tokens);
        
        // Remove the same value from effective stake as we added to % negative votes
        // We need to calculate the effect these votes have on the % negative votes, 
@@ -154,7 +154,7 @@ contract DAppStore {
         // This one gets hairy if dev keys are compromised, not just lost
         if(msg.sender == developer && _amount <= SNTBalance) {
             SNTBalance -= _amount;
-            send(_amount);
+            send(_developer, _amount);
         }
     }
     
@@ -163,8 +163,8 @@ contract DAppStore {
         votes.push(Vote(_amount, _positive));
     }
     
-    function send(uint256 _amount) internal {
+    function burn(uint256 _amount) internal {
         // Called when upvotes or downvotes need to send SNT to the developer
-        send(_developer, _amount);
+        send(0x0, _amount);
     }
 }

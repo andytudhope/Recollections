@@ -30,7 +30,7 @@ Now, if I really like, or don't like, that DApp, I can choose to vote, which cos
     1. I literally upvote, which has no effect on the balance of the DApp in the store, but makes it more expensive for others to downvote and acts as a "donation" to the developer.
     2. I stake some SNT to the DApp to "protect or promote" it (which is obviously much more expensive than just voting). Staking does effect the balance shown in the store.
 
-And that's it. Developers know exactly what they need to stake to rank highly, users know exactly who has staked what to show up where they do AND they can choose to influence that position if they feel strongly enough to back that up with some value of their own (which goes back to the developers to close entirely this virtuous feedback loop).
+And that's it. Developers know exactly what they need to stake to rank highly, users know exactly who has staked what to show up where they do AND they can choose to influence that position if they feel strongly enough to back that up with some value of their own. The SNT that it costs to vote either way is burnt, so as not to create perverse incentives for developers to profit from putting up bad/malicious DApps, having the community vote on them to move them down, and then withdrawing their stake.
 
 ## Can you give a maximally simple description of (1) who the participants are, (2) what actions the different categories of participants can take and (3) what the incentives are?
 
