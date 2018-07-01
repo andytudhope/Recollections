@@ -23,6 +23,8 @@ contract DAppStore {
     // Consult spreadsheet for these 3 values
     uint256 public TOTAL_SNT = 3,470,483,788;
     uint256 public percent_snt = 0.000001;
+    uint256 public curve = (1/1.91);
+    uint256 public interval = TOTAL_SNT / percent_snt;
     
     // You can only mint "votes" by expressing an opinion.
     // NB: with the curve I've designed, I'd rather use the word "vote" to play this game clearly with. 
@@ -39,7 +41,7 @@ contract DAppStore {
         bytes32 name;
         bytes32 id;
         uint256 _SNTBalance;
-        uint256 _effectiveBalance;
+        uint256 _effectOnBalance;
         Vote votes;
     }
     mapping (uint => Dapp) dapps;
@@ -57,56 +59,42 @@ contract DAppStore {
     }    
     
     // The rankings should be done externally, by reading from the chain. The Dapps with the highest 
-    // (_SNTBalance - _effectiveBalance) are those displayed in Status. 
+    // (_SNTBalance * _effectOnBalance) are those displayed in Status. 
     // Each release post can have a report with data from the chain
     // and hopefully we can get to a place soon where we can automate it all, and maybe even make it dynamic.
     
-    function numVotesToMint(uint256 _SNTBalance) internal returns(uint256) {
+    function numVotesToMint(uint256 _SNTamount) internal returns(uint256) {
         
-        if (_SNTBalance == 0) {
+        if (_SNTamount == 0) {
             return num_votes_to_mint = 0;
         }
 
-        if (_SNTBalance <= TOTAL_SNT * snt_percent) {
-            // If there is less staked than the first interval, this needs to reflect F2
-            // Needs to be interval / rate, but rate = interval * percent_snt
-            var num_votes_to_mint_at_1 = (1 / percent_snt); 
-            return num_votes_to_mint_at_1; 
-        }
+        // We need to return num_votes_minted per SNT in the first interval (K2)
+        // This is the rate per SNT, multiplied by the % SNT actually available, 
+        // to give the final number of votes minted per SNT in the first interval.
+        // (_SNTamount / rate) * (% available - % negative)
+        // (_SNTamount * curve) * (curve - _effectOnBalance)
+        var num_votes_minted_in_1 = (_SNTamount * curve) * (curve - effectOnBalance);
          
-        if (_SNTBalance > TOTAL_SNT * snt_percent) {
-            // We need to know the interval _SNTBalance is in and the number of tokens minted previously.
-            // interval, for this curve, is just TOTAL_SNT * snt_percent, though.
-            // This is why the interval and the rate must be functions only of the TOTAL_SNT.
+        // We need to know the interval _SNTBalance + _SNTamount is in for the arithmetic sequence.
+        // interval, for this curve, is just TOTAL_SNT * snt_percent, though.
             
-             var current_interval_index = Math.round(_SNTBalance / (TOTAL_SNT * snt_percent));
-             // The Math.round trick is why it is important that the interval is defined as an arithmetic sequence.
+        var current_interval_index = Math.round(_SNTBalance + _SNTamount / (interval));
+        // The Math.round trick is why it is important that the interval is defined as an arithmetic sequence.
              
-            // Get the previous number of tokens, i.e. (1) the exponential => linear optimisation problem
-            // How we parameterize our linearization of the exponential really matters
-            // Done well, it results in the below:
-            // `% staked available = % available - %negative = rate` is what we enforce, 
-            // `% available =(_SNTBalance * rate) / 100`, and
-            // `% negative == _effectiveBalance` by looking at the boundary conditions. 
-            // `((_SNTBalance * rate) / 100 ) - effectiveBalance = % staked available = rate`
-            // ` (_SNTBalance/100) - (_effectiveBalance / rate) = 1`
-            // But, by inspecting the spreadsheet, 1 / rate == curve because of the function we are using 
-            // and the fact that it has an exponential area. Therefore:
-            // (_SNTBalance/100) - (_effectiveBalance * curve) = 1
-            // (_SNTBalance/100) - 1 = _effectiveBalance * curve
-            // ((_SNTBalance/100) - 1) / _effectiveBalance = curve
+        // Because the curve is now linear based on how we have parameterised it, we can code
+        // it easily as an arithmetic sequence based on the num_votes_minted_in_1:
+        var num_votes_to_mint_per_snt = (_SNTamount * curve) * (curve - effectOnBalance) + (current_interval_index * (_SNTamount * curve) * (curve - effectOnBalance))
+        // Still not right, but getting closer.
 
-            // We know we want the interval and the curve to affect the significant term of the arithmetic sequence, as the parameterisation above requires it, but how are they related? 
-            // My intuition is that it is `((interval * rate) * current_interval_index)`. The reason it is `*` is because as _effectiveBalance gets bigger and bigger (more votes are cast), 
-            // we need to mint less votes (i.e. it needs to be more expensive).
-            // `num_tokens_to_mint = num_votes_to_mint_at_1 + ((current_interval_index * rate) * num_votes_to_mint_at_1);` which is the same as:         
-            return num_tokens_to_mint = num_votes_to_mint_at_1 + (current_interval_index * (((SNTBalance/100) - 1) / _effectiveBalance)) * num_votes_to_mint_at_1);
-        }
+        return num_votes_to_mint = num_votes_to_mint_per_snt * _SNTamount;
+
     } 
     
     function costOfMinting(uint256 _SNT) public view returns(uint256) {
         // Used in UI to calculate fees
-        return numVotesToMint(_SNT);
+        var votes = numVotesToMint(_SNT);
+        return votes/_SNT;
     }
     
     function stake() public {
@@ -138,17 +126,12 @@ contract DAppStore {
        // Otherwise devs could stake bad/malicious apps, get money back as the community
        // downvotes them and then withdraw their stake having made a tidy profit.
        burn(msg.data.tokens);
-       // Remove the same value from effective stake as we added to % negative votes
        // We need to calculate the effect these votes have on the % negative votes, 
-       // then subtract the absolute value from _effectiveBalance.
-       // i.e. (2) the boundary value problem
-       var negative_votes_before = _effectiveBalance;
-       var negative_votes_now = effectiveBalance + dappvotes;
+       // then add that to _effectOnBalance.
+       var negative_votes_before = _effectOnBalance * _SNTBalance;
+       var negative_votes_now = negative_votes_before + dappvotes;
        var negative_percent = ((negative_votes_now - negative_votes_before) / negative_votes_now ) * 100
-       _effectiveBalance -= negative_percent;
-       // See spreadsheet for proof.
-       // We can read both _SNTBalance and _effectiveBalance ourselves from the chain anyway, no need to waste gas 
-       // on further calculations here.
+       _effectOnBalance += negative_percent;
     }
     
     function withdrawStake(uint256 _amount) public {
