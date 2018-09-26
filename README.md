@@ -8,7 +8,9 @@ What's more, **what's different this time**, is that the idealism exists indepen
 
 My idealism arises out of cryptoeconomics, which is not about egalitarianism, but about designing systems with no central point of control. Decentralisation is the goal, egalitarianism is a great success metric. But not the way around, because egalitarianism is not a purely mathematical function that can be optimised.
 
-You can see the way I calculated the curve used [here](https://docs.google.com/spreadsheets/d/1WAxmOuBHN7R0StrIYV6L3UeJqaLRP3Cz_uSJEfowEo4/edit?usp=sharing).
+You can see the way I calculated the curve used [here](https://docs.google.com/spreadsheets/d/1WAxmOuBHN7R0StrIYV6L3UeJqaLRP3Cz_uSJEfowEo4/edit?usp=sharing) (Use the `copy_of_curve` sheet).
+
+Watch the [tech talk here](https://youtu.be/82wMcgHSej0). 
 
 # How It Works
 
