@@ -6,33 +6,30 @@ The beauty of Ethereum to me, can be summed up simply:
 
 What's more, **what's different this time**, is that the idealism exists independently of the people who encoded it, who inevitably become corrupted in some way, because we are all human. And to be human is to be corruptible, in some very real and simple way. 
 
-So, I have designed a pretty neat way to curate DApps in our Dapp store, which I think represents a *general* solution to the problem of how best and most simply to curate information without any central form of authority *including the community*, because cryptoeconomics is not about egalitarianism, it is about designing systems with no central point of control. Decentralisation is the goal, egalitarianism is a great success metric. But not the way around, because egalitarianism is not a purely mathematical function that can be optimised.
+My idealism arises out of cryptoeconomics, which is not about egalitarianism, but about designing systems with no central point of control. Decentralisation is the goal, egalitarianism is a great success metric. But not the way around, because egalitarianism is not a purely mathematical function that can be optimised.
 
-In the hope that I am right about idealism, and that it doesn't matter where this comes from (within or outside of Status) because ideas are what are really most powerful over a long enough period of time, and in the spirit of open source code, you can check out the pseudo code and the way I calculated the curve used [here](https://docs.google.com/spreadsheets/d/1V1EMpDtAa7pP9F968VBb3dc2GUOT_BmS7-dK_0kwSDw/edit?usp=sharing).
-
-Even better, I don't think this would work if it were run as a closed source project, as (if it works) it would result in insane benefits to early token holders of that particular token, which violates the "egalitarianism as a success metric" clause. So, having done the leg work, making sure the idea starts out as open source is the last big piece to place before the game starts.
-
+You can see the way I calculated the curve used [here](https://docs.google.com/spreadsheets/d/1WAxmOuBHN7R0StrIYV6L3UeJqaLRP3Cz_uSJEfowEo4/edit?usp=sharing).
 
 # How It Works
 
 DApps are ranked by whoever has staked the most, it is as simple as that. With one, small twist: the more you stake to get ranked highly, the easier it is for anyone to influence that position.
 
-Picture this, if you will. As a user, I go the DApp Store tab in Status and see the first page full of awesome DApps. I do not need SNT, I do not even need to know what SNT is, to do this.
+As a user, I go the DApp Store tab in Status and see the first page full of awesome DApps. I do not need SNT, I do not even need to know what SNT is, to do this.
 
-Next to each DApp, I can see a `Staked SNT` amount, so I can tell exactly who has staked what to get that place in the rankings. And I know that part of that stake, defined by some verifiable maths I don't need to understand, is held for as long as the DApp wants to be a part of the Status DApp Store. Which means there is less SNT is circulation, which means my SNT is worth more, so I am happy because the DApps that appear at the top are - quite literally - providing me with value. 
+Next to each DApp, I can see a `Staked SNT` amount, so I can tell exactly who has staked what to get that place in the rankings. I can also see a little upvote and downvote button, which I immediately recognise from sites like Reddit or Amazon etc. Clicking on these buttons costs me SNT, which I find surprising, but I am informed that, if I really wish to influence the position of the DApp, I need to pay a small cost - "put my money where my mouth is" in other words. I am also told that this cost goes directly back to the developer, which seems neat.  
 
-Even if indirectly, it is still a better metric that "downloads", or "stars", or "views" or any other suboptimal and easy-to-manipulate "social" metric.
+Developer's already pay for SEO and AdWords, so paying to rank is not a new idea. However, in this system, how they rank is (a) totally transparent to the user, (b) can be influenced by that user if they feel strongly enough to pay a small cost and (c) whatever way a user votes, a good portion of the money that the developer initially staked to rank comes back to them.
 
-Now, if I really like, or don't like, that DApp, I can choose to vote, which costs me some SNT. 
+They can also withdraw their stake and leave the store at any time they wish to.
 
-1. Each downvote I cast equates to `-1 SNT` from the balance of the DApp in the rankings. These downvotes are burnt, they get progressively more expensive to mint, and can only subtract up to roughly half of the balance that DApp staked. Remember though, that the more the DApp has staked in total, the cheaper these votes are to mint, which results in a nice equilibrium.
+1. Each downvote subtracts from the balance of the DApp in the rankings. Votes get progressively more expensive to mint, and only 62.5% of the SNT that the DApp staked to rank is available for voting. The cost to downvote is burnt, so that developer's are not directly incentivised to produce bad content that requires people to downvote it. 
 2. Each upvote has one of 2 results, split up in the UI:
     1. I literally upvote, which has no effect on the balance of the DApp in the store, but makes it more expensive for others to downvote and acts as a "donation" to the developer.
     2. I stake some SNT to the DApp to "protect or promote" it (which is obviously much more expensive than just voting). Staking does effect the balance shown in the store.
 
 And that's it. Developers know exactly what they need to stake to rank highly, users know exactly who has staked what to show up where they do AND they can choose to influence that position if they feel strongly enough to back that up with some value of their own. 
 
-The SNT that it costs to downvote is burnt, so as not to create perverse incentives for developers to profit from putting up bad/malicious DApps, forcing the community to vote on them to move them down, and then withdrawing their stake to walk away with a tidy profit.
+The SNT that it costs to downvote is burnt, so as not to create perverse incentives for developers to profit from putting up bad/malicious DApps, forcing the community to vote on them to move them down, and then withdrawing their stake.
 
 The SNT it costs to upvote goes as a donation to the developer, so that they have further incentive (beyond just ranking highly) to participate in the DApp store ranking system.
 
@@ -41,7 +38,7 @@ The SNT it costs to upvote goes as a donation to the developer, so that they hav
 1. Participants are developers who want to see their DApp get ranked highly so people use it.
 
 2. 
-    1. Developers can stake SNT (really, this is a general solution that only requires some fixed, fungible limit against which to optimise, so it could be ANY fixed, fungible asset or thing that people value).
+    1. Developers can stake SNT (really, this is a general solution that only requires some fixed, fungible limit against which to optimise, so it could be ANY fixed supply, fungible asset or thing that people value).
     2. Users can upvote or downvote their DApps, though I don’t see this happening too much, because it costs them and there is NO INCENTIVE for users, unless they’re feeling super motivated to make sure some DApp gets ranked less/more highly and are willing to pay to make that happen.
     3. Users simply benefit as a side-effect of the optimal curation of information, exactly like they do now.
 
