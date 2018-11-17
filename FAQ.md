@@ -10,20 +10,6 @@ The more SNT you stake to get higher in the overall rankings, the easier and che
 
 That is why we use a bonded curve: to make minting votes progressively cheaper in an exponential way.
 
-However, coding exponentials is hard, and it means we have to store each interval, which is  expensive. So, we need to apply some factor that turns our exponential relationship between cost to mint and num votes minted into a linear one. Linear relationships are easy to code: they are just arithmetic sequences. So, we're looking for a factor that will turn exponential => linear.
-
-Casting the interval as an arithmetic sequence based on a % of the Total SNT in Circulation means we can linearize the curve as above. Which makes the % we choose the factor which can be used to turn the exponential linear, so that we can code it cheaply.
-
-We now have a linear curve we can code simply as `num_tokens_to_mint = num_tokens_minted_at_1 + (interval_index * num_tokens_minted_at_1)`. However, that's not quite what we want, is it? We want an exponential so that it is indeed cheaper to mint votes the more SNT has been staked.
-
-So, we need to find some factor to multiply the significant term of the above arithmetic sequence to make it exponential again. This factor is exactly the `rate` we are minting votes at. If we define this rate as the same as the `1 / % staked_avaliable` == `1 / % available - % negative` we arrive at an exponential curve we can still code easily as:
-
-`num_tokens_to_mint = num_tokens_minted_at_1 + ((1 / rate) * interval_index * num_tokens_minted_at_1)`
-
-**The need to linearize the exponential curves sounds like it comes only from that being hard to do in Ethereum? Aren't all of these things are just premature optimisations that we shouldn't need to be doing?**
-
-Linearization is not a premature optimisation, it is the thing itself which makes it all work, because setting the interval as a function of TOTAL SNT gives us a simple, fixed, and fungible constant against which we can optimise.
-
 **OK, explain the incentives to me on the contract in terms of 1.) the user of the app 2.) the developer?**
 
 1. The user of the app - NO INCENTIVES, this is the sociological factor that makes it all work. People are always saying "We need to get the community more involved! Let's incentivise them to curate information FOR us, so we don't have to do it".
@@ -35,6 +21,7 @@ It costs users to vote, so they would only do so to complain (if they feel reall
 This is why this is not just a solution for a DappStore, but a general solution for curating information when there is some known bound to how that information is curated (here the Total SNT In Circulation).
 
 PageRank's big insight when the web got going was that sorting information effectively was more important than displaying it well, which is what everyone else was trying to do. 
+
 The big insight here is that, in the decentralized web, the simple fact that there is, by definition, no central authority means it's not about sorting at all. 
 It's about curating, and we need to figure out the way to do that most optimally - which is what this curve and contract are. (Maybe not most optimally, but close anyway).
 
@@ -51,40 +38,37 @@ Status does not have to show the exact rankings in the Dapp store. We can reserv
 
 **So in the current model only the developer can stake? Or is there an option for others to participate as well?**
 
-Yeah, of course! Anyone can stake, and we provide the option in the UI. When you chose to upvote, it's either "Promote and protect" == staking more
-or "Community love" == minting positive votes and sending a portion of that SNT to the developer. 
+Yeah, of course! Anyone can stake, and we provide the option in the UI. When you chose to upvote, it's either "Donate" == staking more or "Protect" == minting positive votes and sending a portion of that SNT to the developer.
+
 A portion that relies only on the params of the curve being used to protect the integrity of the store as a whole.
 
 **Is it possible to pump and dump an app?**
 
 Not really, because you're only using SNT, not a token linked to the market cap or value of that specific app.
-Anyway, dropping the rankings just means the developer is getting potentially half their money back, which they can use to increase stake etc.
+
+Anyway, dropping in the rankings just means the developer is getting a significant portion of their money back, which they can use to increase stake etc.
 
 **Will our minimum stake for the developer be dynamic based on the total curve, or by some fixed _fiat_ value?**
 
 There is no minimum stake if you look at the contract. Anyone can create a DApp, with or without tokens.
-However, if you send tokens along with the call to create the Dapp (not sure how to do this yet, maybe a proxy with `approveAndTransfer` somehow?) then that dapp is created with a starting balance, which is - again - what is used to rank it, whatever that starting balance is (even if 0).
+
 This means the minimum cost to list a DApp (or any piece of information you might like) is only the gas costs of creating a new struct in a contract (i.e. very low).
 
 **I'm a DApp developer. I'm going to stake my SNT, then buy back all the tokens I can and vote positively with them, for which I get the SNT used to vote, because I'm the developer?**
 
-Yip, that's true. So, we need to ask, what is the maximum cost to a developer to rank first? In this set up it's ( 1 / `rate` ). That is, for some % of what it would actually have cost in SNT, I can get to the top of the DApp store and ensure no-one can vote against me. 
-This is why there is no incentive to upvote (other than to protect or donate). Positive votes don't influence your "effective" stake, only negative votes count.
+Yip, that's true. That is, I can ensure no-one can vote against me while receiving back 62.5% of the SNT I staked at first. 
 
-**Re-iterate:** upvoting is only a social signal for the UI, there is no contractual benefit. The only reason to upvote, other than protect/donate, is to increase how expensive it is (by decreasing % negative) to downvote your DApp by buying up tokens.
-You could call the contract manually with the right data, upvote yourself massively and have the SNT come right back to you (one reason why only, say, 52% is available). 
-a) that's not actually optimal (because of the UI catch) and b) it's only about social signalling, so it's possible to prove that behaviour on the chain, and Status can block from the UI only 2 things: DApps that manipulate voting, or mailicious code.
-Hence you run the risk of spending 52% of the SNT required to top the DApp store and STILL being blocked in the UI. 
-Note "the SNT required to top the dapp store" above. This is the surest signal that the cryptoeconomic security of DApps on top of the DApp store is a purely a function of the total SNT staked.
+1. This is why there is no incentive in terms of an increased ranking to upvote. Positive votes don't influence your "effective" stake, only negative votes count.
+2. We're back to point about _contractual reality_ versus the Status UI, though. As one implementation of an open contract, Status can still block from our UI two things: DApps that manipulate voting, or mailicious code (as both of these can be fairly objectively verified). Because such an action would require on chain actions, we could prove to a reasonable degree such vote mainpulation and block the DApp, which - once again - severely alters their incentive structure.
 
-This is one way of casting the game being played: How much SNT is worth risking against the chance that the UI can divert from contractual reality under specific, well-defined conditions versus how much SNT do we need to return to make sure developers get back enough in order to make it worth their while to stake SNT in the first place, which also effects how secure the DApp store is as a whole? 
+This is one way of casting the game being played: How much SNT is worth risking against the chance that the UI can divert from contractual reality under specific, well-defined conditions? This must be balanced in the design against how much SNT we need to return to make sure developers get back enough in order to make it worth their while to stake SNT in the first place (which also effects how secure the DApp store is as a whole)? 
 
 **Is there any contractual rule about voting for yourself?**
 
-Even if that could be reliably identified, there's nothing to stop you voting for yourself in the actual contract. However, there is a social contract that Status upholds 
-which says that manipulating more than - say - 50% of the votes unprovoked, or some more suitable param, gets you pulled from the UI.
+Even if that could be reliably identified, there's nothing to stop you voting for yourself in the actual contract. However, there is a social contract that Status upholds which says that manipulating more than - say - 50% of the votes unprovoked, or some more suitable param, gets you pulled from the UI.
 
 Yes, one day I envision DApp store wars, where devs have to stake more to prevent themselves moving down the rankings which, neatly, corresponds to a donation in SNT to the whole community. 
+
 So, if they're fighting a competitor/troll trying who is downvoting them, they can stake more, upvote themselves and/or fight back/apply for help. Or, if they did something that upset their customers or the wider community, they'll need to stake more too. Sounds like a better form of contrition to me. 
 
 All the while, more SNT goes into the cryptoeconomic security of the dapp store as a whole - **this is the key insight here**.
@@ -122,7 +106,7 @@ I like the ideas a lot, but my concern is less from an economic standpoint than 
 
 In my proposal, it's all very simple.
 
-The developer **knows** that, in order to get onto the first page, they need to stake X amount, of which they can receive back a % defined only by the curve (i.e. the abstract mathematical structure) on which the game is based. They can also withdraw that (entire) stake and leave the ranking system at any time, should they so like, which I think is important, being something of a voluntarist, in addition to a fan of decentralisation.
+The developer **knows** that, in order to get onto the first page, they need to stake X amount, of which they can receive back a % defined only by the curve (i.e. the abstract mathematical structure) on which the game is based. 
 
 The user **knows** that the information/products/services they are seeing are those that have provided most *literal* value to the system in which they're being ranked, because staking funds locks up a certain % of those funds (for as long as that info/product/service is ranked), which decreases the total amount of tokens in circulation, driving up demand and prices, and - again, quite literally - providing value to the community of token holders.
 
