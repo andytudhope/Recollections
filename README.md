@@ -27,7 +27,7 @@ They can also withdraw their stake and leave the store at any time they wish to 
 
 And that's it. Developers know exactly what they need to stake to rank highly, users know exactly who has staked what to show up where they do AND they can choose to influence that position if they feel strongly enough to back that up with some value of their own.
 
-![Bare-bones UI](./img/bare_bones_ui.png)
+![Bare-bones UI](./bare_bones_ui.png)
 
 ## Can you give a maximally simple description of (1) who the participants are, (2) what actions the different categories of participants can take and (3) what the incentives are?
 
