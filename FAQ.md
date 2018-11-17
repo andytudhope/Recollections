@@ -85,8 +85,6 @@ If you look at the contract, there is an idea named `_effectiveBalance`, which i
 
 So, dapp A would have `_effectiveBalance` 2500 SNT, dapp B 2596 SNT, therefore DApp B ranks higher.
 
-I think the SNT staked can be withdrawn at any time yes, also defined in the contract (though I worry about key management and developers getting compromised there). Open to suggestions on delays/restrictions that might make this more secure.
-
 If you're asking how I got to those values, it's important to realise that **upvoting has NO EFFECT** on the `_effectiveBalance` on the DApp (it just makes it more expensive to mint future votes). This is important because there are already perverse incentives for developers to stake their app to the top of the rankings and then just buy all the votes available and use them to upvote, getting some % of their money back and ensuring that no-one can move their DApp down (other than another developer staking more, obvs).
 
 So, we implement a social contract that says Status does not have to honour the the contractual reality in 2 very specific, narrow and *falsifiable* conditions:

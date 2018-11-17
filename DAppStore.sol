@@ -139,22 +139,6 @@ contract DAppStore {
     }
     
     // -- TEST
-    function withdrawStake(bytes32 _id, uint256 _amount) public {
-        uint dappIdx = id2index[_id];
-        Dapp storage d = dapps[dappIdx];
-
-        require(d.id == _id);
-
-        require(_amount != 0);
-        require(d.SNTBalance >= _amount);
-        require(d.developer == msg.sender);
-
-        d.SNTBalance -= _amount; // TODO: what happens if balance is 0? Dapp is deleted?
-        
-        require(SNT.transferFrom(address(this), msg.sender, _amount));
-    }
-    
-    // -- TEST
     function mint(Dapp storage d, uint256 _amount, bool _positive) internal {
         d.votes.push(Vote(_amount, _positive));
     }

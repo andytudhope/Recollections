@@ -18,8 +18,6 @@ DApps are ranked by whoever has staked the most, it is as simple as that. With o
 
 Developer's already pay for SEO and AdWords, so paying to rank is not a new idea. However, in this system, how they rank is (a) totally transparent to the user, (b) can be influenced by that user if they feel strongly enough to pay a small cost and (c) whatever way a user votes, a good portion of the money that the developer initially staked to rank comes back to them.
 
-They can also withdraw their stake and leave the store at any time they wish to (WIP).
-
 1. Each downvote subtracts from the balance of the DApp in the rankings. Votes get progressively more expensive to mint, and only 62.5% of the SNT that the DApp staked to rank is available for voting. 
 2. Each upvote has one of 2 results, split up in the UI:
     1. I literally upvote, which has no effect on the balance of the DApp in the store, but makes it more expensive for others to downvote and acts as a "protection" to the developer.
