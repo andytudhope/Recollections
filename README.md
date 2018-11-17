@@ -1,4 +1,4 @@
-# theStateOfUs
+# Recollections
 
 The beauty of Ethereum to me, can be summed up simply:
 
