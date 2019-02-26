@@ -89,8 +89,8 @@ contract DAppStore {
         uint mBalance = d.balance + _amount;
         uint mRate = 1 - (mBalance/max);
         uint mAvailable = mBalance * mRate;
-        uint mMinted = mAvailable ** (1/mRate);
-        uint mEBalance = mBalance - ((mMinted/(1/mRate))*(mAvailable/mMinted));
+        uint mVMinted = mAvailable ** (1/mRate);
+        uint mEBalance = mBalance - ((mVMinted/(1/mRate))*(mAvailable/mVMinted));
         
         return (mEBalance - d.e_balance);
     }
