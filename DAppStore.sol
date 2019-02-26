@@ -135,6 +135,8 @@ contract DAppStore {
     /*
         Downvoting sends SNT back to the developer of the DApp, while lowering it's
         effective balance in the Store.
+        The reason that _percent_down is still a param is because firguring out the effect on the
+        effective balance without it requires integration, which is not nice in Solidity.
     */
     function downvote(uint256 _id, uint8 _percent_down, uint256 _amount) public { 
         require(1 < _percent_down < 99);
@@ -143,6 +145,15 @@ contract DAppStore {
         uint dappIdx = id2index[_id];
         Dapp storage d = dapps[dappIdx];
         require(d.id == _id);
+        
+        uint cost = downvoteCost(_id, _percent_down);
+        /* 
+            TODO: what happens when the amount is greater, or lesser, than the cost?
+            Greater than should be returned to user,
+            lesser than throw an error that says the parameters have changed.
+            Not a good UI though - any better solutions?
+        */
+        require(_amount >= cost);
         
         uint balance_down_by = (_percent_down * d.e_balance);
         uint votes_required = (balance_down_by * d.v_minted * d.rate) / d.available;
@@ -155,9 +166,6 @@ contract DAppStore {
             TODO: Not sure if this implies users must grant allowance to the DApp store
             when upvoting, and then for each individual DApp they want to downvote? Could
             be an annoying UI feature if so. Is there a better way?
-            
-            Also, there could be slippage between calling downvoteCost and actually downvoting.
-            How to handle that graciously?
         */
         require(SNT.allowance(msg.sender, d.developer) >= _amount);
         require(SNT.transferFrom(msg.sender, d.developer, _amount));
