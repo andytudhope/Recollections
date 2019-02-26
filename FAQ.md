@@ -10,9 +10,9 @@ The more SNT you stake to get higher in the overall rankings, the easier and che
 
 That is why we use a bonded curve: to make minting votes progressively cheaper in an exponential way.
 
-**OK, explain the incentives to me on the contract in terms of 1.) the user of the app 2.) the developer?**
+**Explain the incentives to me on the contract in terms of 1.) the user of the app 2.) the developer?**
 
-1. The user of the app - NO INCENTIVES, this is the sociological factor that makes it all work. People are always saying "We need to get the community more involved! Let's incentivise them to curate information FOR us, so we don't have to do it".
+1. The user of the app - NO INCENTIVES People are always saying "We need to get the community more involved! Let's incentivise them to curate information FOR us, so we don't have to do it".
 No! That's not the point of mechanism design as applied to cryptoeconomics. The point is to create systems that use mathematics and/or cryptography so that NO-ONE has undue influence over the system.
 It costs users to vote, so they would only do so to complain (if they feel really strongly), or donate to/protect an app that is being trolled. #EffectiveDirectCharity.
 
@@ -38,9 +38,7 @@ Status does not have to show the exact rankings in the Dapp store. We can reserv
 
 **So in the current model only the developer can stake? Or is there an option for others to participate as well?**
 
-Yeah, of course! Anyone can stake, and we provide the option in the UI. When you chose to upvote, it's either "Donate" == staking more or "Protect" == minting positive votes and sending a portion of that SNT to the developer.
-
-A portion that relies only on the params of the curve being used to protect the integrity of the store as a whole.
+Yeah, of course! Anyone can stake, which is exactly equivalent to upvoting, and we provide the option in the UI. 
 
 **Is it possible to pump and dump an app?**
 
@@ -50,47 +48,29 @@ Anyway, dropping in the rankings just means the developer is getting a significa
 
 **Will our minimum stake for the developer be dynamic based on the total curve, or by some fixed _fiat_ value?**
 
-There is no minimum stake if you look at the contract. Anyone can create a DApp, with or without tokens.
+The contract only stipulates that in order to create a ranked DApp, you have to spend more than 0 SNT, which should be OK for now, not sure it's worth making this dynamic.
 
-This means the minimum cost to list a DApp (or any piece of information you might like) is only the gas costs of creating a new struct in a contract (i.e. very low).
+This means the minimum cost to list a DApp (or any piece of information you might like) is pretty much only the gas costs of creating a new struct in a contract (i.e. very low).
 
 **I'm a DApp developer. I'm going to stake my SNT, then buy back all the tokens I can and vote positively with them, for which I get the SNT used to vote, because I'm the developer?**
 
-Yip, that's true. That is, I can ensure no-one can vote against me while receiving back 62.5% of the SNT I staked at first. 
-
-1. This is why there is no incentive in terms of an increased ranking to upvote. Positive votes don't influence your "effective" stake, only negative votes count.
-2. We're back to point about _contractual reality_ versus the Status UI, though. As one implementation of an open contract, Status can still block from our UI two things: DApps that manipulate voting, or mailicious code (as both of these can be fairly objectively verified). Because such an action would require on chain actions, we could prove to a reasonable degree such vote mainpulation and block the DApp, which - once again - severely alters their incentive structure.
-
-This is one way of casting the game being played: How much SNT is worth risking against the chance that the UI can divert from contractual reality under specific, well-defined conditions? This must be balanced in the design against how much SNT we need to return to make sure developers get back enough in order to make it worth their while to stake SNT in the first place (which also effects how secure the DApp store is as a whole)? 
+No. Upvotes are stored in the DApp Store contract and contribute onle the DApp's balance - they are notsent back to the develop, and do not make future votes more expensive to mint, as the curve applies only to downvotes.
 
 **Is there any contractual rule about voting for yourself?**
 
-Even if that could be reliably identified, there's nothing to stop you voting for yourself in the actual contract. However, there is a social contract that Status upholds which says that manipulating more than - say - 50% of the votes unprovoked, or some more suitable param, gets you pulled from the UI.
+Remember that voting for yourself is the exact equivalent of staking more SNT to your DApp, so this is actually encouraged.
 
-Yes, one day I envision DApp store wars, where devs have to stake more to prevent themselves moving down the rankings which, neatly, corresponds to a donation in SNT to the whole community. 
+The dynamics could be endlessly fascinating: devs upvoting/staking more to prevent themselves moving down the rankings which, neatly, corresponds to a donation in SNT to the whole community. 
 
-So, if they're fighting a competitor/troll trying who is downvoting them, they can stake more, upvote themselves and/or fight back/apply for help. Or, if they did something that upset their customers or the wider community, they'll need to stake more too. Sounds like a better form of contrition to me. 
+If they're fighting a competitor/troll trying who is downvoting them, they can upvote themselves and/or appeal for help from the community. Or, if they did something that upset their customers or the wider community, they'll need to stake more too. Sounds like a better form of contrition to me. 
 
-All the while, more SNT goes into the cryptoeconomic security of the dapp store as a whole - **this is the key insight here**.
+All the while, more SNT goes into the the Dapp Store, increasing cryptoeconomic security as a whole - **this is the key insight here**.
 
-Anti-social behaviour (trolling) and corporate competitiveness == community love in the form of both a more secure Dapp store in this scheme and (potentially) higher SNT prices as there's less SNT in circulation ;)
+Anti-social behaviour (trolling) and corporate competitiveness == community love in the form of both a more secure Dapp Store in this scheme and (potentially) higher SNT prices as there's less SNT in circulation ;)
 
 **It seems like the weakness here is not the math, but that the fact that the participants have no reasonable incentives. If developers have to stake and they don’t really get the bulk of those resouces back and the users don’t ever need to use it, what’s the point? The developers won’t stake if there’s no users, and no users will use it because there’s no incentive for them to vote on Dapps.**
 
 Why do people pay for AdWords, SEO, etc. then? Or as users, do we use PageRank, even though there is no incentive to vote on which links appear first and why? This is exactly the same incentive structure when you really think about it, except the users have no influence at all over what they see, it's not transparent about who is at the top and why, and we all just have to trust Google "not to be evil"...
-
-**I am still not clear on how this interacts with upvotes and downvotes. If dapp A has 2500 SNT staked with 10 upvotes and 0 downvotes, and dapp B has 2600 SNT staked with 2 upvotes and 4 downvotes, who gets ranked higher?**
-
-If you look at the contract, there is an idea named `_effectiveBalance`, which is what the DApp actually gets ranked on. As it turns out, because of the boundary value problem solved on the curve_algo sheet in the spreadsheet above, we can subtract the same absolute value X from `_effectiveBalance` in SNT as the % effect on `staked_available` (cell H2 in the sheet) downvoting X times would have.
-
-So, dapp A would have `_effectiveBalance` 2500 SNT, dapp B 2596 SNT, therefore DApp B ranks higher.
-
-If you're asking how I got to those values, it's important to realise that **upvoting has NO EFFECT** on the `_effectiveBalance` on the DApp (it just makes it more expensive to mint future votes). This is important because there are already perverse incentives for developers to stake their app to the top of the rankings and then just buy all the votes available and use them to upvote, getting some % of their money back and ensuring that no-one can move their DApp down (other than another developer staking more, obvs).
-
-So, we implement a social contract that says Status does not have to honour the the contractual reality in 2 very specific, narrow and *falsifiable* conditions:
-
-1. Malicious code: requires a link to the code and a proof of why it is malicious.
-2. Vote manipulation: requires blockchain proof of suspicious transactions.
 
 **What are the votes denominated in? Do the votes also involve staking SNT, or is it something else?**
 
