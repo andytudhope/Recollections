@@ -17,7 +17,7 @@ contract DAppStore {
     uint256 total == 3470483788;
     /* 
         According to calculations here: https://beta.observablehq.com/@andytudhope/dapp-store-snt-curation-mechanism
-        an interesting choices for the ceiling are around 0.4, but this requires more research/modelling.
+        interesting choices for the ceiling are around 0.4, but this requires more research/modelling.
     */
     uint8 ceiling == 0.4;
     uint256 max = total * (ceiling/100);
