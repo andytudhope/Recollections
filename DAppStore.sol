@@ -11,9 +11,7 @@ contract DAppStore {
         SNT = _SNT;
     }
     
-    /*
-        Total SNT in circulation
-    */
+    // Total SNT in circulation
     uint256 total = 3470483788;
     /* 
         According to calculations here: https://beta.observablehq.com/@andytudhope/dapp-store-snt-curation-mechanism
@@ -21,9 +19,8 @@ contract DAppStore {
     */
     uint8 ceiling = 0.4;
     uint256 max = total * (ceiling/100);
-    /*
-        Whether we need more than an id param to identify arbitrary data must still be discussed.
-    */
+    
+    // Whether we need more than an id param to identify arbitrary data must still be discussed.
     struct Data {
         address developer;
         bytes32 id;
@@ -43,6 +40,7 @@ contract DAppStore {
     event upvote(bytes32 id, uint256 amount, uint256 newEffectiveBalance);
     event downvote(bytes32 id, uint256 amount, uint256 votes_cast, uint256 newEffectiveBalance);
     event withdraw(bytes32 id, uint256 amount, uint256 newEffectiveBalance);
+    
     
     /*
         Anyone can create a DApp (i.e an arb piece of data this contract happens to care about)
@@ -72,6 +70,7 @@ contract DAppStore {
         emit DAppCreated(_id, _amount);
     }
     
+    
     /* 
         For use in the UI to show how the effective balance changes as a result of your donation.
         This does _not_ mean it uses the curve: funds donated in upvoting go directly
@@ -91,6 +90,7 @@ contract DAppStore {
         
         return (mEBalance - d.e_balance);
     }
+    
     
     /*
         Upvoting sends SNT directly to the contract, not to the developer and this gets
@@ -116,9 +116,11 @@ contract DAppStore {
         emit upvote(_id, _amount, d.e_balance);
     }
     
+    
     /*
         For use in the UI, along with a slider that allows you to pick the % effect
         you want to have on a DApp's rankings before calculating the cost to you.
+        Designs here: https://www.figma.com/file/MYWmd1buvc2AMvUmFP9w42t5/Discovery?node-id=604%3A5110
     */
     function downvoteCost(uint256 _id, uint8 _percent_down) public returns(uint256 cost) { 
         require(1 < _percent_down < 99);
@@ -131,6 +133,7 @@ contract DAppStore {
         uint votes_required = (balance_down_by * d.v_minted * d.rate) / d.available;
         return cost = (d.available / (d.v_minted - (d.v_cast + votes_required))) * (votes_required / _percent_down / 100);
     }
+    
     
     /*
         Downvoting sends SNT back to the developer of the DApp, while lowering it's
@@ -172,6 +175,7 @@ contract DAppStore {
         
         emit downvote(_id, _amount, votes_required, d.e_balance);
     }
+    
     
     /*  
         Developers can withdraw an amount not more than what was available of the
