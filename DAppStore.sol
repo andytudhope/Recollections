@@ -181,7 +181,7 @@ contract DAppStore {
         
         uint dappIdx = id2index[_id];
         Data storage d = dapps[dappIdx];
-        require(d.id == _id);
+        require(d.id == _id, "Error fetching correct DApp");
         
         require(_amount <= d.available, "You can only withdraw a percentage of the SNT staked, less what you have already received");
         
