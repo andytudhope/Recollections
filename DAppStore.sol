@@ -12,7 +12,7 @@ contract DAppStore {
     }
     
     // Total SNT in circulation
-    uint256 total = 3470483788;
+    uint total = 3470483788;
     /* 
         According to calculations here: https://beta.observablehq.com/@andytudhope/dapp-store-snt-curation-mechanism
         interesting choices for the ceiling are around 0.4, but this requires more research/modelling.
@@ -21,7 +21,7 @@ contract DAppStore {
         permission to alter the ceiling and promise to do so based on the results of voting in https://vote.status.im
     */
     uint8 ceiling = 0.4;
-    uint256 max = total * (ceiling/100);
+    uint max = total * (ceiling/100);
     
     // Whether we need more than an id param to identify arbitrary data must still be discussed.
     struct Data {
