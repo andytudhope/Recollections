@@ -8,24 +8,13 @@ What's more, **what's different this time**, is that the idealism exists indepen
 
 My idealism arises out of cryptoeconomics, which is not about egalitarianism, but about designing systems with no central point of control. Decentralisation is the goal, egalitarianism is a great success metric. But not the way around, because egalitarianism is not a purely mathematical function that can be optimised.
 
-You can see the way I calculated the curve used [here](https://docs.google.com/spreadsheets/d/1WAxmOuBHN7R0StrIYV6L3UeJqaLRP3Cz_uSJEfowEo4/edit?usp=sharing) (Use the `copy_of_curve` sheet).
+1. Watch the [tech talk for a high-level overview here](https://youtu.be/82wMcgHSej0) (now a bit outdated). 
 
-Watch the [tech talk here](https://youtu.be/82wMcgHSej0). 
+2. Play with a [live ObservableHQ notebook here](https://beta.observablehq.com/@andytudhope/dapp-store-snt-curation-mechanism).
 
-# How It Works
+3. Read the [contract in this repo](./DAppStore.sol).
 
-DApps are ranked by whoever has staked the most, it is as simple as that. With one, small twist: the more you stake to get ranked highly, the easier it is for anyone to influence that position.  
-
-Developer's already pay for SEO and AdWords, so paying to rank is not a new idea. However, in this system, how they rank is (a) totally transparent to the user, (b) can be influenced by that user if they feel strongly enough to pay a small cost and (c) whatever way a user votes, a good portion of the money that the developer initially staked to rank comes back to them.
-
-1. Each downvote subtracts from the balance of the DApp in the rankings. Votes get progressively more expensive to mint, and only 62.5% of the SNT that the DApp staked to rank is available for voting. 
-2. Each upvote has one of 2 results, split up in the UI:
-    1. I literally upvote, which has no effect on the balance of the DApp in the store, but makes it more expensive for others to downvote and acts as a "protection" to the developer.
-    2. I stake some SNT to the DApp to "donate" it (which is obviously much more expensive than just voting). Staking does effect the balance shown in the store.
-
-And that's it. Developers know exactly what they need to stake to rank highly, users know exactly who has staked what to show up where they do AND they can choose to influence that position if they feel strongly enough to back that up with some value of their own.
-
-![Bare-bones UI](./bare_bones_ui.png)
+3. Read the spec (WIP) [here](https://notes.status.im/rzuWBolLRzWgERjycKHP9Q).
 
 ## Can you give a maximally simple description of (1) who the participants are, (2) what actions the different categories of participants can take and (3) what the incentives are?
 
@@ -42,10 +31,10 @@ People ask, “But, shouldn’t the DApps that appear the first be, the most use
 
 As we are all slowly figuring out though, the problem is with defining “value to the community”. Is that downloads, stars, usage metrics, customer feedback? All of these things are suboptimal and easy to manipulate.
 
-The system I propose quite literally ranks the DApps that appear first by whichever ones provide most actual, *literal* value to the community, because a % of what is staked (defined by the curve I found, not by any human), stays staked as long as the DApp wishes to rank. This means there is less SNT in circulation, which means that the value of each individual SNT goes up and that the developers who do pay to get their DApp ranked highly are - again, quite literally - providing value to the community of users and getting ranked appropriately on it. I believe it’s similar to what Vitalik wrote about [here](http://vitalik.ca/general/2017/10/17/moe.html).
+The system I propose simply ranks the DApps that appear first by whichever ones provide most actual, *literal* value to the community. Staking to rank means less SNT is in circulation, which means that the value of each individual SNT goes up and that the developers who do pay to get their DApp ranked highly are - again, quite literally - providing economic value to the community of users and getting ranked appropriately on it. I believe it’s similar to what Vitalik wrote about [here](http://vitalik.ca/general/2017/10/17/moe.html).
 
 3. 
-    1. The user of the app - NO INCENTIVES, this is the sociological factor that makes it all work. People are always saying “We need to get the community more involved! Let’s incentivise them to curate information FOR us, so we don’t have to do it”. No! That’s not the point of mechanism design as applied to cryptoeconomics. The point is to create systems that use mathematics and/or cryptography so that NO-ONE has undue influence over the system. It costs users to vote, so they would only do so to complain (if they feel really strongly), or donate to/protect an app that is being trolled. #EffectiveDirectCharity.
+    1. The user of the app - NO INCENTIVES. People are always saying “We need to get the community more involved! Let’s incentivise them to curate information for us, so we don’t have to do it”. No! That’s not the point of mechanism design as applied to cryptoeconomics. The point is to create systems that use mathematics and/or cryptography so that NO-ONE has undue influence over the system. It costs users to vote, so they would only do so to complain (if they feel really strongly), or donate to/protect an app that is being trolled. #EffectiveDirectCharity.
 
     2. The developer is incentivised by appearing higher in the Dapp store (which translates to more use, as it does now with AdWords or SEO etc.), and by being able to receive back some % of the SNT they staked if they do something awesome that the community likes, and wants to donate to. They can also withdraw their stake at any time, should they desire, so they are not locked in.
 
