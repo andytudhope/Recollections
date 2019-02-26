@@ -77,7 +77,7 @@ contract DAppStore {
         to the Dapp's balance in the store, not the developer's pocket. It's just that actual
         ranking is done on e_balance, and this must still be recalculated, even for upvotes.
     */
-    function upvoteEffect(uint256 _id, uint256 _amount) public returns(uint256 effect) { 
+    function upvoteEffect(bytes32 _id, uint256 _amount) public returns(uint256 effect) { 
         uint dappIdx = id2index[_id];
         Dapp storage d = dapps[dappIdx];
         require(d.id == _id);
@@ -96,7 +96,7 @@ contract DAppStore {
         Upvoting sends SNT directly to the contract, not to the developer and this gets
         added to the DApp's balance, no curve required.
     */
-    function upvote(uint256 _id, uint256 _amount) public { 
+    function upvote(bytes32 _id, uint256 _amount) public { 
         require(_amount != 0);
         require(SNT.allowance(msg.sender, address(this)) >= _amount);
         require(SNT.transferFrom(msg.sender, address(this), _amount));
@@ -122,7 +122,7 @@ contract DAppStore {
         you want to have on a DApp's rankings before calculating the cost to you.
         Designs here: https://www.figma.com/file/MYWmd1buvc2AMvUmFP9w42t5/Discovery?node-id=604%3A5110
     */
-    function downvoteCost(uint256 _id, uint8 _percent_down) public returns(uint256 cost) { 
+    function downvoteCost(bytes32 _id, uint8 _percent_down) public returns(uint256 cost) { 
         require(1 < _percent_down < 99);
         
         uint dappIdx = id2index[_id];
@@ -141,7 +141,7 @@ contract DAppStore {
         The reason that _percent_down is still a param is because firguring out the effect on the
         effective balance without it requires integration, which is not nice in Solidity.
     */
-    function downvote(uint256 _id, uint8 _percent_down, uint256 _amount) public { 
+    function downvote(bytes32 _id, uint8 _percent_down, uint256 _amount) public { 
         require(1 < _percent_down < 99);
         require(_amount != 0);
          
@@ -181,7 +181,7 @@ contract DAppStore {
         Developers can withdraw an amount not more than what was available of the
         SNT they originally staked minus what they have already received back in downvotes.
     */
-    function withdraw(uint256 _id, uint256 _amount) public { 
+    function withdraw(bytes32 _id, uint256 _amount) public { 
         uint dappIdx = id2index[_id];
         Dapp storage d = dapps[dappIdx];
         
