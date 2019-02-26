@@ -41,7 +41,7 @@ contract DAppStore {
     
     event DAppCreated(bytes32 id, uint256 amount);
     event upvote(bytes32 id, uint256 amount, uint256 newEffectiveBalance);
-    event downvote(bytes32 id, uint256 amount, uint256 votes_cast, uint256 newEffectiveBalance);
+    event downvote(bytes32 id, uint256 amount, uint256 newEffectiveBalance, uint256 tokensReceived);
     event withdraw(bytes32 id, uint256 amount, uint256 newEffectiveBalance);
     
     
@@ -176,7 +176,7 @@ contract DAppStore {
         require(SNT.allowance(msg.sender, d.developer) >= _amount);
         require(SNT.transferFrom(msg.sender, d.developer, _amount));
         
-        emit downvote(_id, _amount, votes_required, d.e_balance);
+        emit downvote(_id, _amount, d.e_balance, d.received);
     }
     
     
