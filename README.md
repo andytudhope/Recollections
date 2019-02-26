@@ -6,7 +6,7 @@ The beauty of Ethereum to me, can be summed up simply:
 
 What's more, **what's different this time**, is that the idealism exists independently of the people who encoded it, who inevitably become corrupted, because we are all human. And to be human is to be corruptible, in some very real and simple way. 
 
-My idealism arises out of cryptoeconomics, which is not about egalitarianism, but about designing systems with no central point of control. Decentralisation is the goal, egalitarianism is a great success metric. But not the way around, because egalitarianism is not a purely mathematical function that can be optimised.
+My idealism arises out of cryptoeconomics, which is not about egalitarianism, but about designing systems with no central point of control. Decentralisation is the goal, egalitarianism is a great success metric. But not the other way around, because egalitarianism is not something for which we can reasonably optimise.
 
 1. Watch the [tech talk for a high-level overview here](https://youtu.be/82wMcgHSej0) (now a bit outdated). 
 
