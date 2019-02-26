@@ -82,7 +82,7 @@ contract DAppStore {
     */
     function upvoteEffect(bytes32 _id, uint256 _amount) public returns(uint256 effect) { 
         uint dappIdx = id2index[_id];
-        Dapp storage d = dapps[dappIdx];
+        Data storage d = dapps[dappIdx];
         require(d.id == _id);
         
         uint mBalance = d.balance + _amount;
@@ -105,7 +105,7 @@ contract DAppStore {
         require(SNT.transferFrom(msg.sender, address(this), _amount));
         
         uint dappIdx = id2index[_id];
-        Dapp storage d = dapps[dappIdx];
+        Data storage d = dapps[dappIdx];
         require(d.id == _id);
         
         d.balance = d.balance + _amount;
@@ -127,7 +127,7 @@ contract DAppStore {
         require(1 < _percent_down < 99);
         
         uint dappIdx = id2index[_id];
-        Dapp storage d = dapps[dappIdx];
+        Data storage d = dapps[dappIdx];
         require(d.id == _id);
         
         uint balance_down_by = (_percent_down * d.e_balance);
@@ -147,7 +147,7 @@ contract DAppStore {
         require(_amount != 0);
          
         uint dappIdx = id2index[_id];
-        Dapp storage d = dapps[dappIdx];
+        Data storage d = dapps[dappIdx];
         require(d.id == _id);
         
         uint cost = downvoteCost(_id, _percent_down);
@@ -185,7 +185,7 @@ contract DAppStore {
     */
     function withdraw(bytes32 _id, uint256 _amount) public { 
         uint dappIdx = id2index[_id];
-        Dapp storage d = dapps[dappIdx];
+        Data storage d = dapps[dappIdx];
         
         require(d.id == _id);
         require(msg.sender == d.developer);
