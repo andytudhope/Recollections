@@ -124,7 +124,7 @@ contract DAppStore {
         Designs here: https://www.figma.com/file/MYWmd1buvc2AMvUmFP9w42t5/Discovery?node-id=604%3A5110
     */
     function downvoteCost(bytes32 _id, uint8 _percent_down) public returns(uint256 cost) { 
-        require(1 < _percent_down < 99);
+        require(0.01 < _percent_down < 0.99);
         
         uint dappIdx = id2index[_id];
         Data storage d = dapps[dappIdx];
