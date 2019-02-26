@@ -16,6 +16,9 @@ contract DAppStore {
     /* 
         According to calculations here: https://beta.observablehq.com/@andytudhope/dapp-store-snt-curation-mechanism
         interesting choices for the ceiling are around 0.4, but this requires more research/modelling.
+        
+        Alternative to a static ceiling: create an `owner` of this contract, set it to a multisig, give that owner multisig
+        permission to alter the ceiling and promise to do so based on the results of voting in https://vote.status.im
     */
     uint8 ceiling = 0.4;
     uint256 max = total * (ceiling/100);
