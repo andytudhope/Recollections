@@ -191,14 +191,17 @@ contract DAppStore {
         require(msg.sender == d.developer);
         require(_amount <= (d.available - d.received));
         
-        d.balance -= _amount;
+        d.balance = d.balance - _amount;
         d.rate = 1 - (d.balance/max);
         d.available = d.balance * d.rate;
         d.v_minted = d.available ** (1/d.rate);
+        if (d.v_cast > d.v_minted) {
+            d.v_cast = d.v_minted;
+        }
         d.e_balance = d.balance - ((d.v_cast/(1/d.rate))*(d.available/d.v_minted));
         
         /*  
-            TODO: Not sure how to actually send funds out of this contract and back
+            TODO: Not sure how to actually send tokens out of this contract and back
             to developers when they wish to withdraw?
         */
         require(SNT.allowance(address(this), d.developer) >= _amount);
