@@ -143,7 +143,7 @@ contract DAppStore {
         effective balance without it requires integration, which is not nice in Solidity.
     */
     function downvote(bytes32 _id, uint8 _percent_down, uint256 _amount) public { 
-        require(1 < _percent_down < 99);
+        require(0.01 < _percent_down < 0.99);
         require(_amount != 0);
          
         uint dappIdx = id2index[_id];
