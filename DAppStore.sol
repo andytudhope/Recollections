@@ -83,7 +83,7 @@ contract DAppStore {
     */
     function upvoteEffect(bytes32 _id, uint256 _amount) public returns(uint256 effect) { 
         uint dappIdx = id2index[_id];
-        Data storage d = dapps[dappIdx];
+        Data memory d = dapps[dappIdx];
         require(d.id == _id);
         
         uint mBalance = d.balance + _amount;
@@ -128,7 +128,7 @@ contract DAppStore {
         require(0.01 <= _percent_down <= 0.99);
         
         uint dappIdx = id2index[_id];
-        Data storage d = dapps[dappIdx];
+        Data memory d = dapps[dappIdx];
         require(d.id == _id);
         
         uint balance_down_by = (_percent_down * d.e_balance);
