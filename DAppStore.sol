@@ -125,7 +125,7 @@ contract DAppStore {
         Designs here: https://www.figma.com/file/MYWmd1buvc2AMvUmFP9w42t5/Discovery?node-id=604%3A5110
     */
     function downvoteCost(bytes32 _id, uint8 _percent_down) public returns(uint256 cost) { 
-        require(0.01 < _percent_down < 0.99);
+        require(0.01 <= _percent_down <= 0.99);
         
         uint dappIdx = id2index[_id];
         Data storage d = dapps[dappIdx];
@@ -144,7 +144,7 @@ contract DAppStore {
         effective balance without it requires integration, which is not nice in Solidity.
     */
     function downvote(bytes32 _id, uint8 _percent_down, uint256 _amount) public { 
-        require(0.01 < _percent_down < 0.99);
+        require(0.01 <= _percent_down <= 0.99);
         require(_amount > 0);
          
         uint dappIdx = id2index[_id];
