@@ -14,7 +14,9 @@ My idealism arises out of cryptoeconomics, which is not about egalitarianism, bu
 
 3. Read the [contract in this repo](./DAppStore.sol).
 
-3. Read the spec (WIP) [here](https://notes.status.im/rzuWBolLRzWgERjycKHP9Q).
+4. Read the spec (WIP) [here](https://notes.status.im/rzuWBolLRzWgERjycKHP9Q).
+
+5. Look at the [evolving designs](https://www.figma.com/file/MYWmd1buvc2AMvUmFP9w42t5/Discovery?node-id=35%3A420).
 
 ## Can you give a maximally simple description of (1) who the participants are, (2) what actions the different categories of participants can take and (3) what the incentives are?
 
