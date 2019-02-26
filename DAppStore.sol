@@ -149,10 +149,8 @@ contract DAppStore {
         require(d.id == _id, "Error fetching correct DApp");
         
         uint cost = downvoteCost(_id, _percent_down);
-        /* 
-            Not a good UI flow here, having to estimate the cost and then potentially 
-            have the state of the contract change before you actually downvote - any better solutions?
-        */
+        // Not a good UI flow here, having to estimate the cost and then potentially 
+        // have the state of the contract change before you actually downvote - any better solutions?
         require(_amount >= cost, "The contract state has changed and this is no longer a valid vote, please refresh");
         
         uint balance_down_by = (_percent_down * d.e_balance);
@@ -166,8 +164,6 @@ contract DAppStore {
             TODO: This implies users must grant allowance to the DApp store
             when upvoting, and then for each individual DApp they want to downvote. Could
             be an annoying UI feature if so. Is there a better way?
-            Also, how to make sure (_amount - cost) is returned to the user if voting becomes cheaper? Is it implied
-            by using cost instead of _amount?
         */
         require(SNT.allowance(msg.sender, d.developer) >= cost);
         require(SNT.transferFrom(msg.sender, d.developer, cost));
