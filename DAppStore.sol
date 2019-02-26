@@ -5,6 +5,7 @@ import './token/MiniMeTokenInterface.sol';
 
 contract DAppStore {
     
+    // Could be any EIP20/MiniMe token
     MiniMeTokenInterface SNT;
 
     constructor (MiniMeTokenInterface _SNT) public {
@@ -21,6 +22,7 @@ contract DAppStore {
         permission to alter the ceiling and promise to do so based on the results of voting in https://vote.status.im
     */
     uint8 ceiling = 0.4;
+    // The max amount of tokens it is possible to stake, as a percentage of the total in circulation
     uint max = total * (ceiling/100);
     
     // Whether we need more than an id param to identify arbitrary data must still be discussed.
@@ -48,7 +50,7 @@ contract DAppStore {
         Anyone can create a DApp (i.e an arb piece of data this contract happens to care about).
     */
     function createDApp(bytes32 _id, uint _amount) public { 
-        require(_amount > 0, "You must spend some SNT to submit a DApp for ranking in order to avoid spam")
+        require(_amount > 0, "You must spend some SNT to submit a ranking in order to avoid spam")
         require(SNT.allowance(msg.sender, address(this)) >= _amount);
         require(SNT.transferFrom(msg.sender, address(this), _amount));
         
@@ -81,7 +83,7 @@ contract DAppStore {
     function upvoteEffect(bytes32 _id, uint _amount) public returns(uint effect) { 
         uint dappIdx = id2index[_id];
         Data memory d = dapps[dappIdx];
-        require(d.id == _id, "Error fetching correct DApp");
+        require(d.id == _id, "Error fetching correct data");
         
         uint mBalance = d.balance + _amount;
         uint mRate = 1 - (mBalance/max);
@@ -104,7 +106,7 @@ contract DAppStore {
         
         uint dappIdx = id2index[_id];
         Data storage d = dapps[dappIdx];
-        require(d.id == _id, "Error fetching correct DApp");
+        require(d.id == _id, "Error fetching correct data");
         
         d.balance = d.balance + _amount;
         d.rate = 1 - (d.balance/max);
@@ -121,12 +123,12 @@ contract DAppStore {
         you want to have on a DApp's rankings before calculating the cost to you.
         Designs here: https://www.figma.com/file/MYWmd1buvc2AMvUmFP9w42t5/Discovery?node-id=604%3A5110
     */
-    function downvoteCost(bytes32 _id, uint _percent_down) public returns(uint256 cost) { 
-        require(0.01 <= _percent_down <= 0.99, "You must effect the DApp by more than 1, and less than 99, percent");
+    function downvoteCost(bytes32 _id, uint _percent_down) public returns(uint cost) { 
+        require(0.01 <= _percent_down <= 0.99, "You must effect the ranking by more than 1, and less than 99, percent");
         
         uint dappIdx = id2index[_id];
         Data memory d = dapps[dappIdx];
-        require(d.id == _id, "Error fetching correct DApp");
+        require(d.id == _id, "Error fetching correct data");
         
         uint balance_down_by = (_percent_down * d.e_balance);
         uint votes_required = (balance_down_by * d.v_minted * d.rate) / d.available;
@@ -141,12 +143,12 @@ contract DAppStore {
         effective balance without it requires integration, which is not nice in Solidity.
     */
     function downvote(bytes32 _id, uint8 _percent_down, uint _amount) public { 
-        require(0.01 <= _percent_down <= 0.99, "You must effect the DApp by more than 1, and less than 99, percent");
+        require(0.01 <= _percent_down <= 0.99, "You must effect the ranking by more than 1, and less than 99, percent");
         require(_amount > 0, "You must send some SNT in order to downvote");
          
         uint dappIdx = id2index[_id];
         Data storage d = dapps[dappIdx];
-        require(d.id == _id, "Error fetching correct DApp");
+        require(d.id == _id, "Error fetching correct data");
         
         uint cost = downvoteCost(_id, _percent_down);
         // Not a good UI flow here, having to estimate the cost and then potentially 
@@ -179,9 +181,9 @@ contract DAppStore {
     function withdraw(bytes32 _id, uint _amount) public { 
         uint dappIdx = id2index[_id];
         Data storage d = dapps[dappIdx];
-        require(d.id == _id, "Error fetching correct DApp");
+        require(d.id == _id, "Error fetching correct data");
         
-        require(msg.sender == d.developer, "Only the developer can withdraw SNT staked on this DApp");
+        require(msg.sender == d.developer, "Only the developer can withdraw SNT staked on this data");
         require(_amount <= d.available, "You can only withdraw a percentage of the SNT staked, less what you have already received");
         
         d.balance = d.balance - _amount;
