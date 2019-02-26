@@ -46,10 +46,11 @@ contract DAppStore {
     
     
     /*
-        Anyone can create a DApp (i.e an arb piece of data this contract happens to care about)
-        and there is no need even to start off with a positive balance (i.e. you can stake 0).
+        Anyone can create a DApp (i.e an arb piece of data this contract happens to care about).
+        We require at least some SNT in order to prevent needless spam.
     */
     function createDApp(bytes32 _id, uint256 _amount) public { 
+        require(_amount > 0)
         require(SNT.allowance(msg.sender, address(this)) >= _amountToStake);
         require(SNT.transferFrom(msg.sender, address(this), _amountToStake));
         
@@ -100,7 +101,7 @@ contract DAppStore {
         added to the DApp's balance, no curve required.
     */
     function upvote(bytes32 _id, uint256 _amount) public { 
-        require(_amount != 0);
+        require(_amount > 0);
         require(SNT.allowance(msg.sender, address(this)) >= _amount);
         require(SNT.transferFrom(msg.sender, address(this), _amount));
         
@@ -144,7 +145,7 @@ contract DAppStore {
     */
     function downvote(bytes32 _id, uint8 _percent_down, uint256 _amount) public { 
         require(0.01 < _percent_down < 0.99);
-        require(_amount != 0);
+        require(_amount > 0);
          
         uint dappIdx = id2index[_id];
         Data storage d = dapps[dappIdx];
