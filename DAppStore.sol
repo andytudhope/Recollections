@@ -46,12 +46,11 @@ contract DAppStore {
     
     /*
         Anyone can create a DApp (i.e an arb piece of data this contract happens to care about).
-        We require at least some SNT in order to prevent needless spam.
     */
     function createDApp(bytes32 _id, uint _amount) public { 
-        require(_amount > 0)
-        require(SNT.allowance(msg.sender, address(this)) >= _amountToStake);
-        require(SNT.transferFrom(msg.sender, address(this), _amountToStake));
+        require(_amount > 0, "You must spend some SNT to submit a DApp for ranking in order to avoid spam")
+        require(SNT.allowance(msg.sender, address(this)) >= _amount);
+        require(SNT.transferFrom(msg.sender, address(this), _amount));
         
         uint dappIdx = dapps.length;
         
@@ -82,7 +81,7 @@ contract DAppStore {
     function upvoteEffect(bytes32 _id, uint _amount) public returns(uint effect) { 
         uint dappIdx = id2index[_id];
         Data memory d = dapps[dappIdx];
-        require(d.id == _id);
+        require(d.id == _id, "Error fetching correct DApp");
         
         uint mBalance = d.balance + _amount;
         uint mRate = 1 - (mBalance/max);
@@ -99,13 +98,13 @@ contract DAppStore {
         added to the DApp's balance, no curve required.
     */
     function upvote(bytes32 _id, uint _amount) public { 
-        require(_amount > 0);
+        require(_amount > 0, "You must send some SNT in order to upvote");
         require(SNT.allowance(msg.sender, address(this)) >= _amount);
         require(SNT.transferFrom(msg.sender, address(this), _amount));
         
         uint dappIdx = id2index[_id];
         Data storage d = dapps[dappIdx];
-        require(d.id == _id);
+        require(d.id == _id, "Error fetching correct DApp");
         
         d.balance = d.balance + _amount;
         d.rate = 1 - (d.balance/max);
@@ -123,11 +122,11 @@ contract DAppStore {
         Designs here: https://www.figma.com/file/MYWmd1buvc2AMvUmFP9w42t5/Discovery?node-id=604%3A5110
     */
     function downvoteCost(bytes32 _id, uint _percent_down) public returns(uint256 cost) { 
-        require(0.01 <= _percent_down <= 0.99);
+        require(0.01 <= _percent_down <= 0.99, "You must effect the DApp by more than 1, and less than 99, percent");
         
         uint dappIdx = id2index[_id];
         Data memory d = dapps[dappIdx];
-        require(d.id == _id);
+        require(d.id == _id, "Error fetching correct DApp");
         
         uint balance_down_by = (_percent_down * d.e_balance);
         uint votes_required = (balance_down_by * d.v_minted * d.rate) / d.available;
@@ -138,25 +137,23 @@ contract DAppStore {
     /*
         Downvoting sends SNT back to the developer of the DApp, while lowering the DApp's
         effective balance in the Store.
-        The reason that _percent_down is still a param is because firguring out the effect on the
+        The reason that _percent_down is still a param is because figuring out the effect on the
         effective balance without it requires integration, which is not nice in Solidity.
     */
     function downvote(bytes32 _id, uint8 _percent_down, uint _amount) public { 
-        require(0.01 <= _percent_down <= 0.99);
+        require(0.01 <= _percent_down <= 0.99, "You must effect the DApp by more than 1, and less than 99, percent");
         require(_amount > 0);
          
         uint dappIdx = id2index[_id];
         Data storage d = dapps[dappIdx];
-        require(d.id == _id);
+        require(d.id == _id, "Error fetching correct DApp");
         
         uint cost = downvoteCost(_id, _percent_down);
         /* 
-            TODO: what happens when the amount is greater, or lesser, than the cost?
-            Greater than should be returned to user,
-            lesser than throw an error that says the parameters have changed.
-            Not a good UI though - any better solutions?
+            Not a good UI flow here, having to estimate the cost and then potentially 
+            have the state of the contract change before you actually downvote - any better solutions?
         */
-        require(_amount >= cost);
+        require(_amount >= cost, "The contract state has changed and this is no longer a valid vote, please refresh");
         
         uint balance_down_by = (_percent_down * d.e_balance);
         uint votes_required = (balance_down_by * d.v_minted * d.rate) / d.available;
@@ -169,9 +166,11 @@ contract DAppStore {
             TODO: This implies users must grant allowance to the DApp store
             when upvoting, and then for each individual DApp they want to downvote. Could
             be an annoying UI feature if so. Is there a better way?
+            Also, how to make sure (_amount - cost) is returned to the user if voting becomes cheaper? Is it implied
+            by using cost instead of _amount?
         */
-        require(SNT.allowance(msg.sender, d.developer) >= _amount);
-        require(SNT.transferFrom(msg.sender, d.developer, _amount));
+        require(SNT.allowance(msg.sender, d.developer) >= cost);
+        require(SNT.transferFrom(msg.sender, d.developer, cost));
         
         emit downvote(_id, _amount, d.e_balance);
     }
@@ -182,13 +181,13 @@ contract DAppStore {
         SNT they originally staked minus what they have already received back in downvotes.
     */
     function withdraw(bytes32 _id, uint _amount) public { 
-        require(msg.sender == d.developer);
+        require(msg.sender == d.developer, "Only the developer can withdraw SNT staked on this DApp");
         
         uint dappIdx = id2index[_id];
         Data storage d = dapps[dappIdx];
         require(d.id == _id);
         
-        require(_amount <= d.available);
+        require(_amount <= d.available, "You can only withdraw a percentage of the SNT staked, less what you have already received");
         
         d.balance = d.balance - _amount;
         d.rate = 1 - (d.balance/max);
