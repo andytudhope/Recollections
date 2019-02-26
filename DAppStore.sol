@@ -142,7 +142,7 @@ contract DAppStore {
     */
     function downvote(bytes32 _id, uint8 _percent_down, uint _amount) public { 
         require(0.01 <= _percent_down <= 0.99, "You must effect the DApp by more than 1, and less than 99, percent");
-        require(_amount > 0);
+        require(_amount > 0, "You must send some SNT in order to downvote");
          
         uint dappIdx = id2index[_id];
         Data storage d = dapps[dappIdx];
