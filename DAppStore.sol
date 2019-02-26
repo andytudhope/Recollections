@@ -48,7 +48,7 @@ contract DAppStore {
         Anyone can create a DApp (i.e an arb piece of data this contract happens to care about)
         and there is no need even to start off with a positive balance (i.e. you can stake 0).
     */
-    function createDapp(bytes32 _id, uint256 _amount) public { 
+    function createDApp(bytes32 _id, uint256 _amount) public { 
         require(SNT.allowance(msg.sender, address(this)) >= _amountToStake);
         require(SNT.transferFrom(msg.sender, address(this), _amountToStake));
         
@@ -156,7 +156,7 @@ contract DAppStore {
             when upvoting, and then for each individual DApp they want to downvote? Could
             be an annoying UI feature if so. Is there a better way?
             
-            Also, there could be slippage between calling downvoteCost and actuall downvoting.
+            Also, there could be slippage between calling downvoteCost and actually downvoting.
             How to handle that graciously?
         */
         require(SNT.allowance(msg.sender, d.developer) >= _amount);
