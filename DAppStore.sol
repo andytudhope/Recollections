@@ -33,7 +33,6 @@ contract DAppStore {
         uint256 v_minted;
         uint256 v_cast;
         uint256 e_balance;
-        uint256 received;
     }
     
     Data[] public dapps;
@@ -41,7 +40,7 @@ contract DAppStore {
     
     event DAppCreated(bytes32 id, uint256 amount);
     event upvote(bytes32 id, uint256 amount, uint256 newEffectiveBalance);
-    event downvote(bytes32 id, uint256 amount, uint256 newEffectiveBalance, uint256 tokensReceived);
+    event downvote(bytes32 id, uint256 amount, uint256 newEffectiveBalance);
     event withdraw(bytes32 id, uint256 amount, uint256 newEffectiveBalance);
     
     
@@ -67,7 +66,6 @@ contract DAppStore {
         d.v_minted = d.available ** (1/d.rate);
         d.v_cast = 0;
         d.e_balance = d.balance - ((d.v_cast/(1/d.rate))*(d.available/d.v_minted));
-        d.received = 0;
 
         id2index[_id] = dappIdx;
 
@@ -166,7 +164,6 @@ contract DAppStore {
         d.available = d.available - cost;
         d.v_cast = d.v_cast + votes_required;
         d.e_balance = d.e_balance - balance_down_by;
-        d.received = d.received + _amount;
         
         /*  
             TODO: This implies users must grant allowance to the DApp store
@@ -176,7 +173,7 @@ contract DAppStore {
         require(SNT.allowance(msg.sender, d.developer) >= _amount);
         require(SNT.transferFrom(msg.sender, d.developer, _amount));
         
-        emit downvote(_id, _amount, d.e_balance, d.received);
+        emit downvote(_id, _amount, d.e_balance);
     }
     
     
@@ -191,7 +188,7 @@ contract DAppStore {
         Data storage d = dapps[dappIdx];
         require(d.id == _id);
         
-        require(_amount <= (d.available - d.received));
+        require(_amount <= d.available);
         
         d.balance = d.balance - _amount;
         d.rate = 1 - (d.balance/max);
