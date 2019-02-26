@@ -177,12 +177,11 @@ contract DAppStore {
         SNT they originally staked minus what they have already received back in downvotes.
     */
     function withdraw(bytes32 _id, uint _amount) public { 
-        require(msg.sender == d.developer, "Only the developer can withdraw SNT staked on this DApp");
-        
         uint dappIdx = id2index[_id];
         Data storage d = dapps[dappIdx];
         require(d.id == _id, "Error fetching correct DApp");
         
+        require(msg.sender == d.developer, "Only the developer can withdraw SNT staked on this DApp");
         require(_amount <= d.available, "You can only withdraw a percentage of the SNT staked, less what you have already received");
         
         d.balance = d.balance - _amount;
