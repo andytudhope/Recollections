@@ -105,7 +105,7 @@ contract DAppStore {
         Dapp storage d = dapps[dappIdx];
         require(d.id == _id);
         
-        d.balance += _amount;
+        d.balance = d.balance + _amount;
         d.rate = 1 - (d.balance/max);
         d.available = d.balance * d.rate;
         d.v_minted = d.available ** (1/d.rate);
@@ -134,7 +134,7 @@ contract DAppStore {
     
     
     /*
-        Downvoting sends SNT back to the developer of the DApp, while lowering it's
+        Downvoting sends SNT back to the developer of the DApp, while lowering the DApp's
         effective balance in the Store.
         The reason that _percent_down is still a param is because firguring out the effect on the
         effective balance without it requires integration, which is not nice in Solidity.
@@ -165,8 +165,8 @@ contract DAppStore {
         d.received = d.received + _amount;
         
         /*  
-            TODO: Not sure if this implies users must grant allowance to the DApp store
-            when upvoting, and then for each individual DApp they want to downvote? Could
+            TODO: This implies users must grant allowance to the DApp store
+            when upvoting, and then for each individual DApp they want to downvote. Could
             be an annoying UI feature if so. Is there a better way?
         */
         require(SNT.allowance(msg.sender, d.developer) >= _amount);
