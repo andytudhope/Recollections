@@ -50,7 +50,8 @@ contract DAppStore {
         Anyone can create a DApp (i.e an arb piece of data this contract happens to care about).
     */
     function createDApp(bytes32 _id, uint _amount) public { 
-        require(_amount > 0, "You must spend some SNT to submit a ranking in order to avoid spam")
+        require(_amount > 0, "You must spend some SNT to submit a ranking in order to avoid spam");
+        require (_amount < max, "You cannot stake more SNT than the ceiling dictates");
         require(SNT.allowance(msg.sender, address(this)) >= _amount);
         require(SNT.transferFrom(msg.sender, address(this), _amount));
         
@@ -101,12 +102,14 @@ contract DAppStore {
     */
     function upvote(bytes32 _id, uint _amount) public { 
         require(_amount > 0, "You must send some SNT in order to upvote");
-        require(SNT.allowance(msg.sender, address(this)) >= _amount);
-        require(SNT.transferFrom(msg.sender, address(this), _amount));
         
         uint dappIdx = id2index[_id];
         Data storage d = dapps[dappIdx];
         require(d.id == _id, "Error fetching correct data");
+        
+        require(d.balance + _amount < max, "You cannot stake more SNT than the ceiling dictates");
+        require(SNT.allowance(msg.sender, address(this)) >= _amount);
+        require(SNT.transferFrom(msg.sender, address(this), _amount));
         
         d.balance = d.balance + _amount;
         d.rate = 1 - (d.balance/max);
