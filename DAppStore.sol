@@ -94,7 +94,7 @@ contract DAppStore {
     
     /*
         Upvoting sends SNT directly to the contract, not to the developer and this gets
-        added to their balance, no curve required.
+        added to the DApp's balance, no curve required.
     */
     function upvote(uint256 _id, uint256 _amount) public { 
         require(_amount != 0);
