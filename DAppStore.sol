@@ -14,17 +14,17 @@ contract DAppStore {
     /*
         Total SNT in circulation
     */
-    uint256 total == 3470483788;
+    uint256 total = 3470483788;
     /* 
         According to calculations here: https://beta.observablehq.com/@andytudhope/dapp-store-snt-curation-mechanism
         interesting choices for the ceiling are around 0.4, but this requires more research/modelling.
     */
-    uint8 ceiling == 0.4;
+    uint8 ceiling = 0.4;
     uint256 max = total * (ceiling/100);
     /*
         Whether we need more than an id param to identify arbitrary data must still be discussed.
     */
-    struct Data = {
+    struct Data {
         address developer;
         bytes32 id;
         uint256 balance;
@@ -129,7 +129,7 @@ contract DAppStore {
         
         uint balance_down_by = (_percent_down * d.e_balance);
         uint votes_required = (balance_down_by * d.v_minted * d.rate) / d.available;
-        return cost = (d.available / (d.v_minted - (d.v_cast + votes_required))) * (votes_required / _percent_down / 100)
+        return cost = (d.available / (d.v_minted - (d.v_cast + votes_required))) * (votes_required / _percent_down / 100);
     }
     
     /*
