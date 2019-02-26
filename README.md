@@ -4,7 +4,7 @@ The beauty of Ethereum to me, can be summed up simply:
 
 `By deploying immutable contracts to a shared, public computational surface - contracts whose data can be read deterministically by anyone with access to the internet - we can encode idealism into the way we run society.`
 
-What's more, **what's different this time**, is that the idealism exists independently of the people who encoded it, who inevitably become corrupted in some way, because we are all human. And to be human is to be corruptible, in some very real and simple way. 
+What's more, **what's different this time**, is that the idealism exists independently of the people who encoded it, who inevitably become corrupted, because we are all human. And to be human is to be corruptible, in some very real and simple way. 
 
 My idealism arises out of cryptoeconomics, which is not about egalitarianism, but about designing systems with no central point of control. Decentralisation is the goal, egalitarianism is a great success metric. But not the way around, because egalitarianism is not a purely mathematical function that can be optimised.
 
