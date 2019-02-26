@@ -184,11 +184,12 @@ contract DAppStore {
         SNT they originally staked minus what they have already received back in downvotes.
     */
     function withdraw(bytes32 _id, uint256 _amount) public { 
+        require(msg.sender == d.developer);
+        
         uint dappIdx = id2index[_id];
         Data storage d = dapps[dappIdx];
-        
         require(d.id == _id);
-        require(msg.sender == d.developer);
+        
         require(_amount <= (d.available - d.received));
         
         d.balance = d.balance - _amount;
