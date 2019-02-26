@@ -148,7 +148,7 @@ contract DAppStore {
         uint votes_required = (balance_down_by * d.v_minted * d.rate) / d.available;
         
         d.v_cast += votes_required;
-        d.e_balance = d.balance - ((d.v_cast/(1/d.rate))*(d.available/d.v_minted));
+        d.e_balance = d.e_balance - balance_down_by;
         d.received += _amount;
         
         /*  
