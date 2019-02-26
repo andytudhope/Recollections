@@ -109,9 +109,7 @@ contract DAppStore {
         d.rate = 1 - (d.balance/max);
         d.available = d.balance * d.rate;
         d.v_minted = d.available ** (1/d.rate);
-        d.v_cast = 0;
         d.e_balance = d.balance - ((d.v_cast/(1/d.rate))*(d.available/d.v_minted));
-        d.received = 0;
         
         emit upvote(_id, _amount, d.e_balance);
     }
@@ -161,9 +159,10 @@ contract DAppStore {
         uint balance_down_by = (_percent_down * d.e_balance);
         uint votes_required = (balance_down_by * d.v_minted * d.rate) / d.available;
         
-        d.v_cast += votes_required;
+        d.available = d.available - cost;
+        d.v_cast = d.v_cast + votes_required;
         d.e_balance = d.e_balance - balance_down_by;
-        d.received += _amount;
+        d.received = d.received + _amount;
         
         /*  
             TODO: Not sure if this implies users must grant allowance to the DApp store
