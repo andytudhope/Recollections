@@ -199,7 +199,6 @@ contract DAppStore {
         d.e_balance = d.balance - ((d.v_cast/(1/d.rate))*(d.available/d.v_minted));
         
         // TODO: Check this works!
-        SNT.allowance(address(this), d.developer) = _amount;
         SNT.transferFrom(address(this), d.developer, _amount);
         
         emit withdraw(_id, _amount, d.e_balance);
