@@ -1,9 +1,10 @@
 pragma solidity >=0.4.22 <0.6.0;
 
 import "./token/MiniMeTokenInterface.sol";
+import "./token/ApproveAndCallFallBack.sol";
 
 
-contract DAppStore {
+contract DAppStore is ApproveAndCallFallBack {
     
     // Could be any EIP20/MiniMe token
     MiniMeTokenInterface SNT;
@@ -41,9 +42,9 @@ contract DAppStore {
     mapping(bytes32 => uint) public id2index;
     
     event DAppCreated(bytes32 id, uint amount);
-    event upvote(bytes32 id, uint amount, uint newEffectiveBalance);
-    event downvote(bytes32 id, uint cost, uint newEffectiveBalance);
-    event withdraw(bytes32 id, uint amount, uint newEffectiveBalance);
+    event Upvote(bytes32 id, uint amount, uint newEffectiveBalance);
+    event Downvote(bytes32 id, uint cost, uint newEffectiveBalance);
+    event Withdraw(bytes32 id, uint amount, uint newEffectiveBalance);
     
     /**
      * @dev Anyone can create a DApp (i.e an arb piece of data this contract happens to care about).
@@ -51,10 +52,14 @@ contract DAppStore {
      * @param _amount of tokens to stake on initial ranking.
      */
     function createDApp(bytes32 _id, uint _amount) public { 
+        _createDApp(msg.sender, _id, _amount);
+    }
+    
+    function _createDApp(address _from, bytes32 _id, uint _amount) internal {
         require(_amount > 0, "You must spend some SNT to submit a ranking in order to avoid spam");
         require (_amount < max, "You cannot stake more SNT than the ceiling dictates");
-        require(SNT.allowance(msg.sender, address(this)) >= _amount);
-        require(SNT.transferFrom(msg.sender, address(this), _amount));
+        require(SNT.allowance(_from, address(this)) >= _amount, "Not enough SNT allowance");
+        require(SNT.transferFrom(_from, address(this), _amount), "Transfer failed");
         
         uint dappIdx = dapps.length;
         
@@ -74,7 +79,7 @@ contract DAppStore {
 
         emit DAppCreated(_id, _amount);
     }
-
+    
     /**
      * @dev Used in UI to display effect on ranking of user's donation
      * @param _id bytes32 unique identifier.
@@ -101,6 +106,10 @@ contract DAppStore {
      * @param _amount of tokens to stake on DApp's ranking. Used for upvoting + staking more.
      */
     function upvote(bytes32 _id, uint _amount) public { 
+        _upvote(msg.sender, _id, _amount);
+    }
+    
+    function _upvote(address _from, bytes32 _id, uint _amount) internal { 
         require(_amount > 0, "You must send some SNT in order to upvote");
         
         uint dappIdx = id2index[_id];
@@ -108,8 +117,8 @@ contract DAppStore {
         require(d.id == _id, "Error fetching correct data");
         
         require(d.balance + _amount < max, "You cannot stake more SNT than the ceiling dictates");
-        require(SNT.allowance(msg.sender, address(this)) >= _amount);
-        require(SNT.transferFrom(msg.sender, address(this), _amount));
+        require(SNT.allowance(_from, address(this)) >= _amount, "Not enough SNT allowance");
+        require(SNT.transferFrom(_from, address(this), _amount), "Transfer failed");
         
         d.balance = d.balance + _amount;
         d.rate = 1 - (d.balance/max);
@@ -117,9 +126,9 @@ contract DAppStore {
         d.v_minted = d.available ** (1/d.rate);
         d.e_balance = d.balance - ((d.v_cast/(1/d.rate))*(d.available/d.v_minted));
         
-        emit upvote(_id, _amount, d.e_balance);
+        emit Upvote(_id, _amount, d.e_balance);
     }
-    
+
     /**
      * @dev Used in the UI along with a slider to let the user pick their desired % effect on the DApp's ranking.
      * @param _id bytes32 unique identifier.
@@ -145,6 +154,10 @@ contract DAppStore {
      * @param _percent_down the % of SNT staked on the DApp user would like "remove" from the rank.
      */
     function downvote(bytes32 _id, uint _percent_down) public { 
+        _downvote(msg.sender, _id, _percent_down);
+    }
+    
+    function _downvote(address _from, bytes32 _id, uint _percent_down) internal { 
         require(1/100 <= _percent_down <= 5/100, "You must effect the ranking by more than 1, and less than 5, percent");
          
         uint dappIdx = id2index[_id];
@@ -153,18 +166,14 @@ contract DAppStore {
         
         var (b, v_r, c) = downvoteCost(_id, _percent_down);
 
-        /*  
-            TODO: Implement a different means of allowance/sends in line
-            with https://github.com/status-im/ens-usernames/blob/04bd8921516584a25a0bd9af15ddec3c4830265a/contracts/registry/UsernameRegistrar.sol#L543
-        */
-        require(SNT.allowance(msg.sender, d.developer) >= c);
-        require(SNT.transferFrom(msg.sender, d.developer, c));
+        require(SNT.allowance(_from, d.developer) >= c, "Not enough SNT allowance");
+        require(SNT.transferFrom(_from, d.developer, c), "Transfer failed");
         
         d.available = d.available - c;
         d.v_cast = d.v_cast + v_r;
         d.e_balance = d.e_balance - b;
         
-        emit downvote(_id, c, d.e_balance);
+        emit Downvote(_id, c, d.e_balance);
     }
     
     /**
@@ -190,9 +199,72 @@ contract DAppStore {
         }
         d.e_balance = d.balance - ((d.v_cast/(1/d.rate))*(d.available/d.v_minted));
         
-        // TODO: Check this works!
         SNT.transferFrom(address(this), d.developer, _amount);
         
-        emit withdraw(_id, _amount, d.e_balance);
+        emit Withdraw(_id, _amount, d.e_balance);
     }
+    
+    /**
+     * @notice Support for "approveAndCall".  
+     * @param _from Who approved.
+     * @param _amount Amount being approved, need to be equal `getPrice()`.
+     * @param _token Token being approved, need to be equal `SNT`.
+     * @param _data Abi encoded data with selector of `register(bytes32,address,bytes32,bytes32)`.
+     */
+    function receiveApproval(
+        address _from,
+        uint256 _amount,
+        address _token,
+        bytes _data
+    ) 
+        public
+    {
+        require(_token == address(SNT), "Wrong token");
+        require(_token == address(msg.sender), "Wrong call");
+        require(_data.length <= 132, "Wrong data length");
+        
+        bytes4 sig;
+        bytes32 id;
+        uint256 amount;
+
+        (sig, id, amount) = abiDecodeRegister(_data);
+        
+        require(_amount == amount, "Wrong amount");
+
+        if(sig == bytes4(0x1a214f43)) {
+            _createDApp(_from, id, amount);
+        } else if(sig == bytes4(0xac769090)) {
+            _downvote(_from, id, amount);
+        } else if(sig == bytes4(0x2b3df690)) {
+            _upvote(_from, id, amount);
+        } else {
+            revert("Wrong method selector");
+        }
+    }
+    
+    
+    
+    /**
+     * @dev Decodes abi encoded data with selector for "functionName(bytes32,uint256)".
+     * @param _data Abi encoded data.
+     * @return Decoded registry call.
+     */
+    function abiDecodeRegister(
+        bytes _data
+    ) 
+        private 
+        pure 
+        returns(
+            bytes4 sig,
+            bytes32 id,
+            uint256 amount
+        )
+    {
+        assembly {
+            sig := mload(add(_data, add(0x20, 0)))
+            id := mload(add(_data, 36))
+            amount := mload(add(_data, 68))
+        }
+    }
+
 }
