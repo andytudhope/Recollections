@@ -102,9 +102,9 @@ Specifying the `_percent_down` allows us to calculate the `cost` without integra
 NOTE: it's likely best to poll this method fairly often from Status and store the approx `cost` locally for a quicker, smoother UI and then double check that it's correct before the user confirms the transaction.
 
 4. **downvote**
-    1. params: `(bytes32 _id, uint _percent_down, uint _amount)` 
+    1. params: `(bytes32 _id, uint _percent_down)` 
 
-Send SNT from user directly to developer in order to downvote. Call `downvoteCost` and check that the vote is still valid, i.e. `_amount >= cost`. We actually send `cost` to the developer, not `_amount` which covers the `>` case, but need to throw an error if the state has changed and `amount < cost`.
+Send SNT from user directly to developer in order to downvote. Call `downvoteCost` to get `balance_down_by`, `votes_required` and `cost`.
 
 Add `v_required` to `v_cast`, recalculate `e_balance`, and subtract `cost` from `available` so that `withdraw` works correctly. 
 

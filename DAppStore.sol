@@ -126,7 +126,7 @@ contract DAppStore {
      * @param _percent_down the % of SNT staked on the DApp user would like "remove" from the rank.
      * @return cost
      */
-    function downvoteCost(bytes32 _id, uint _percent_down) public returns(uint cost) { 
+    function downvoteCost(bytes32 _id, uint _percent_down) public returns(uint b, uint v_r, uint c) { 
         require(1/100 <= _percent_down <= 99/100, "You must effect the ranking by more than 1, and less than 99, percent");
         
         uint dappIdx = id2index[_id];
@@ -135,7 +135,8 @@ contract DAppStore {
         
         uint balance_down_by = (_percent_down * d.e_balance);
         uint votes_required = (balance_down_by * d.v_minted * d.rate) / d.available;
-        return cost = (d.available / (d.v_minted - (d.v_cast + votes_required))) * (votes_required / _percent_down / 100);
+        uint cost = (d.available / (d.v_minted - (d.v_cast + votes_required))) * (votes_required / _percent_down / 100);
+        return (balance_down_by, votes_required, cost);
     }
     
     /**
@@ -144,25 +145,18 @@ contract DAppStore {
      * @param _percent_down the % of SNT staked on the DApp user would like "remove" from the rank.
      * @param _amount of SNT they estimate is needed to buy the required votes.
      */
-    function downvote(bytes32 _id, uint _percent_down, uint _amount) public { 
+    function downvote(bytes32 _id, uint _percent_down) public { 
         require(1/100 <= _percent_down <= 99/100, "You must effect the ranking by more than 1, and less than 99, percent");
-        require(_amount > 0, "You must send some SNT in order to downvote");
          
         uint dappIdx = id2index[_id];
         Data storage d = dapps[dappIdx];
         require(d.id == _id, "Error fetching correct data");
         
-        uint cost = downvoteCost(_id, _percent_down);
-        // Not a good UI flow here, having to estimate the cost and then potentially 
-        // have the state of the contract change before you actually downvote - any better solutions?
-        require(_amount >= cost, "The contract state has changed and this is no longer a valid vote, please refresh");
+        var (b, v_r, c) = downvoteCost(_id, _percent_down);
         
-        uint balance_down_by = (_percent_down * d.e_balance);
-        uint votes_required = (balance_down_by * d.v_minted * d.rate) / d.available;
-        
-        d.available = d.available - cost;
-        d.v_cast = d.v_cast + votes_required;
-        d.e_balance = d.e_balance - balance_down_by;
+        d.available = d.available - c;
+        d.v_cast = d.v_cast + v_r;
+        d.e_balance = d.e_balance - b;
         
         /*  
             TODO: Implement a different means of allowance/sends in line
