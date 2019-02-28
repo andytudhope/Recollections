@@ -83,26 +83,26 @@ Accepts some nominal amount of tokens (> 0) and creates a new Data struct with t
 Emit event containing new `e_balance`.
 
 2. **upvoteEffect**
-    1.  params: `(uint _id, uint _amount)`
+    1.  params: `(bytes32 _id, uint _amount)`
 
 Mock add `_amount` to `balance`, calculate `mRate`, `mAvailable`, `mVMinted`, and `mEBalance`. Subtract this from the actual `e_balance` and return the difference to be displayed in the UI when a user is choosing how much to "donate" when upvoting.
  
 3. **upvote**
-    1.  params:`(uint _id, uint _amount)`
+    1.  params:`(bytes32 _id, uint _amount)`
 
 Transfer SNT directly to the contract, which means donating directly to the DApp's `balance`, no curve used, no money to the developer. Then recalculate `rate`, `available`, `v_minted` and `e_balance`. 
 
 Emit event containing new `e_balance`.
 
 3. **downvoteCost**
-    1. params: `(uint _id, uint _percent_down)` 
+    1. params: `(bytes32 _id, uint _percent_down)` 
 
 Specifying the `_percent_down` allows us to calculate the `cost` without integrating anything. Calculate the `v_required` to effect the DApp by the specified % and the return `cost` for use in the UI.
 
 NOTE: it's likely best to poll this method fairly often from Status and store the approx `cost` locally for a quicker, smoother UI and then double check that it's correct before the user confirms the transaction.
 
 4. **downvote**
-    1. params: `(uint _id, uint _percent_down, uint _amount)` 
+    1. params: `(bytes32 _id, uint _percent_down, uint _amount)` 
 
 Send SNT from user directly to developer in order to downvote. Call `downvoteCost` and check that the vote is still valid, i.e. `_amount >= cost`. We actually send `cost` to the developer, not `_amount` which covers the `>` case, but need to throw an error if the state has changed and `amount < cost`.
 
@@ -111,7 +111,7 @@ Add `v_required` to `v_cast`, recalculate `e_balance`, and subtract `cost` from 
 Emit event containing new `e_balance`.
 
 5. **withdraw**
-    1. params: `(uint _id, uint _amount)` 
+    1. params: `(bytes32 _id, uint _amount)` 
 
 Allow developers to reduce thier stake/exit the store provided that `_amount <= available`. Recalculate `balance`, `rate`, `available` and `v_minted`. If `v_cast > v_minted`, then set them equal so the maths is future-proof, and recalculate `e_balance`. 
 
