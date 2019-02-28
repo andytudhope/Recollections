@@ -150,7 +150,7 @@ Simply `balance - available`, i.e. some small amount of SNT not available to be 
 
 5. **The majority of the cost to downvote comes from the last ~5%, so moving a DApp down 80%, say, is not that expensive relative to the effect you have.**
 
-Yeah, we need to play with the curve more to try and mitigate this.
+Yeah, and I'm not sure that playing with the curve will mitigate this. However, another (implemented) solution would be just to lower the second bound in the `require` to - say 5/100 - i.e. you can only affect a ranking by between 1 and 5% with any given vote. More research needs to be done on exactly what the optimal bound there really is (though I'm not sure how to even define "optimal" for this).
 
 6. **I'm worried about the behaviour of [the graph](https://beta.observablehq.com/@andytudhope/dapp-store-snt-curation-mechanism) for higher `v_cast` - things get very expensive.**
 
