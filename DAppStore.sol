@@ -49,7 +49,7 @@ contract DAppStore is ApproveAndCallFallBack {
         
         total = 3470483788;
 
-        ceiling = 4;   // 2 dec fixed pos,  ie: 4 == 0.04,  400 == 4,
+        ceiling = 40;   // 2 dec fixed pos,  ie: 4 == 0.04,  400 == 4,
         
         max = total * (ceiling / 10000);
     }
