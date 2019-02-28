@@ -213,8 +213,8 @@ contract DAppStore is ApproveAndCallFallBack {
     /**
      * @notice Support for "approveAndCall".  
      * @param _from Who approved.
-     * @param _amount Amount being approved, need to be equal `getPrice()`.
-     * @param _token Token being approved, need to be equal `SNT`.
+     * @param _amount Amount being approved, needs to be equal `_amount` or `cost`.
+     * @param _token Token being approved, needs to be `SNT`.
      * @param _data Abi encoded data with selector of `register(bytes32,address,bytes32,bytes32)`.
      */
     function receiveApproval(
@@ -226,8 +226,8 @@ contract DAppStore is ApproveAndCallFallBack {
         public
     {
         require(_token == address(SNT), "Wrong token");
-        require(_token == address(msg.sender), "Wrong call");
-        require(_data.length <= 132, "Wrong data length");
+        require(_token == address(msg.sender), "Wrong account");
+        require(_data.length <= 132, "Incorrect data");
         
         bytes4 sig;
         bytes32 id;

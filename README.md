@@ -48,10 +48,10 @@ An effective economic ranking mechanism, selected with the option `Ranked by SNT
 
 ## UI Mock-ups
 
-Designs being worked on [here](https://www.figma.com/file/MYWmd1buvc2AMvUmFP9w42t5/Discovery?node-id=35%3A420)
+Designs being worked on [here](https://www.figma.com/file/MYWmd1buvc2AMvUmFP9w42t5/Discovery?node-id=35%3A420).
 
 1. The "free complain" feature in the Downvote screen is not included for now. 
-2. The "Add a DApp" screen (ideally, imo, opened from a fab `+` button on the home screen) is not included either.
+2. The "Add a DApp" screen (ideally, imo, opened from a fab `+` button on the home screen) is not included either. We need to figure out if any additional metadata is required before we can design that screen.
 
 ## Specification
 
@@ -61,7 +61,7 @@ Instantiates the MiniMe (or EIP20) interface so that the contract can receive an
 #### Constants
 1. `uint total == 3470483788` - total SNT in circulation.
 2. `uint ceiling` - most influential parameter for [_shape_ of curves](https://beta.observablehq.com/@andytudhope/dapp-store-snt-curation-mechanism) (votes minted per DApp and cost to effect a DApp by some set percent for users). Potentially controlled dynamically by governance mechanism.
-3. `uint max = total * (ceiling/100)` - max SNT that any one DApp can stake.
+3. `uint max = total * (ceiling/10000)` - max SNT that any one DApp can stake.
 
 #### Data Struct
 1. `address developer` - the developer of the DApp, used to send SNT to when `downvote` or `withdraw` is called. 
@@ -121,6 +121,16 @@ Emit event containing new `e_balance`.
     1. params: `(uint _newCeiling)`
 
 Potentially a simple multisig governance mechanism to change the ceiling dynamically in response to demand?
+
+7. **receiveApproval**
+    1. params: `(address _from, uint256 _amount, address _token, bytes _data)`
+
+Included so that users need only sign one transaction when creating a DApp, upvoting or downvoting. Checks that the token (SNT), sender, and data are correct. Decodes the `_data` using `abiDecodeRegister`, checks the amount is correct and figures out which of the three "payable" functions (`createDApp`, `upvote`, and `downvote`) is being called by looking at the signature.
+
+8. **abiDecodeRegister**
+    1. params: `(bytes _data)`
+
+Helps decode the data passed to `receiveApproval` using assembly magic.
 
 #### Notes
 
