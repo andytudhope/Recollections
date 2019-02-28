@@ -9,12 +9,9 @@ contract DAppStore is ApproveAndCallFallBack {
     // Could be any EIP20/MiniMe token
     MiniMeTokenInterface SNT;
 
-    constructor (MiniMeTokenInterface _SNT) public {
-        SNT = _SNT;
-    }
     
     // Total SNT in circulation
-    uint total = 3470483788;
+    uint total;
     /* 
         According to calculations here: https://beta.observablehq.com/@andytudhope/dapp-store-snt-curation-mechanism
         interesting choices for the ceiling are around 0.4, but this requires more research/modelling.
@@ -22,9 +19,10 @@ contract DAppStore is ApproveAndCallFallBack {
         Alternative to a static ceiling: create an `owner` of this contract, set it to a multisig, give that owner multisig
         permission to alter the ceiling and promise to do so based on the results of voting in https://vote.status.im
     */
-    uint ceiling = 0.4;
+    uint ceiling;
+
     // The max amount of tokens it is possible to stake, as a percentage of the total in circulation
-    uint max = total * (ceiling/100);
+    uint max;
     
     // Whether we need more than an id param to identify arbitrary data must still be discussed.
     struct Data {
@@ -45,6 +43,16 @@ contract DAppStore is ApproveAndCallFallBack {
     event Upvote(bytes32 id, uint amount, uint newEffectiveBalance);
     event Downvote(bytes32 id, uint cost, uint newEffectiveBalance);
     event Withdraw(bytes32 id, uint amount, uint newEffectiveBalance);
+    
+    constructor(MiniMeTokenInterface _SNT) public {
+        SNT = _SNT;
+        
+        total = 3470483788;
+
+        ceiling = 4;   // 2 dec fixed pos,  ie: 4 == 0.04,  400 == 4,
+        
+        max = total * (ceiling / 10000);
+    }
     
     /**
      * @dev Anyone can create a DApp (i.e an arb piece of data this contract happens to care about).
@@ -86,7 +94,7 @@ contract DAppStore is ApproveAndCallFallBack {
      * @param _amount of tokens to stake/"donate" to this DApp's ranking.
      * @return effect of donation on DApp's e_balance 
      */
-    function upvoteEffect(bytes32 _id, uint _amount) public returns(uint effect) { 
+    function upvoteEffect(bytes32 _id, uint _amount) public view returns(uint effect) { 
         uint dappIdx = id2index[_id];
         Data memory d = dapps[dappIdx];
         require(d.id == _id, "Error fetching correct data");
@@ -132,19 +140,17 @@ contract DAppStore is ApproveAndCallFallBack {
     /**
      * @dev Used in the UI along with a slider to let the user pick their desired % effect on the DApp's ranking.
      * @param _id bytes32 unique identifier.
-     * @param _percent_down the % of SNT staked on the DApp user would like "remove" from the rank.
+     * @param _percent_down the % of SNT staked on the DApp user would like "remove" from the rank. 2 decimals fixed pos, i.e.: 3.45% == 345
      * @return cost
      */
-    function downvoteCost(bytes32 _id, uint _percent_down) public returns(uint b, uint v_r, uint c) { 
-        require(1/100 <= _percent_down <= 5/100, "You must effect the ranking by more than 1, and less than 5, percent");
-        
+    function downvoteCost(bytes32 _id, uint _percent_down) public view returns(uint b, uint v_r, uint c) { 
         uint dappIdx = id2index[_id];
         Data memory d = dapps[dappIdx];
         require(d.id == _id, "Error fetching correct data");
         
-        uint balance_down_by = (_percent_down * d.e_balance);
+        uint balance_down_by = (_percent_down * d.e_balance / 100);
         uint votes_required = (balance_down_by * d.v_minted * d.rate) / d.available;
-        uint cost = (d.available / (d.v_minted - (d.v_cast + votes_required))) * (votes_required / _percent_down / 100);
+        uint cost = (d.available / (d.v_minted - (d.v_cast + votes_required))) * (votes_required / _percent_down / 10000);
         return (balance_down_by, votes_required, cost);
     }
     
@@ -158,13 +164,13 @@ contract DAppStore is ApproveAndCallFallBack {
     }
     
     function _downvote(address _from, bytes32 _id, uint _percent_down) internal { 
-        require(1/100 <= _percent_down <= 5/100, "You must effect the ranking by more than 1, and less than 5, percent");
+        require(_percent_down >= 100 && _percent_down <= 500, "You must effect the ranking by more than 1, and less than 5, percent");
          
         uint dappIdx = id2index[_id];
         Data storage d = dapps[dappIdx];
         require(d.id == _id, "Error fetching correct data");
         
-        var (b, v_r, c) = downvoteCost(_id, _percent_down);
+        (uint b, uint v_r, uint c) = downvoteCost(_id, _percent_down);
 
         require(SNT.allowance(_from, d.developer) >= c, "Not enough SNT allowance");
         require(SNT.transferFrom(_from, d.developer, c), "Transfer failed");
