@@ -48,7 +48,7 @@ contract DAppStore {
     /**
      * @dev Anyone can create a DApp (i.e an arb piece of data this contract happens to care about).
      * @param _id bytes32 unique identifier.
-     * @param _amount amount of tokens to stake on initial ranking.
+     * @param _amount of tokens to stake on initial ranking.
      */
     function createDApp(bytes32 _id, uint _amount) public { 
         require(_amount > 0, "You must spend some SNT to submit a ranking in order to avoid spam");
@@ -78,7 +78,7 @@ contract DAppStore {
     /**
      * @dev Used in UI to display effect on ranking of user's donation
      * @param _id bytes32 unique identifier.
-     * @param _amount amount of tokens to stake/"donate" to this DApp's ranking.
+     * @param _amount of tokens to stake/"donate" to this DApp's ranking.
      * @return effect of donation on DApp's e_balance 
      */
     function upvoteEffect(bytes32 _id, uint _amount) public returns(uint effect) { 
@@ -98,7 +98,7 @@ contract DAppStore {
     /**
      * @dev Sends SNT directly to the contract, not the developer. This gets added to the DApp's balance, no curve required.
      * @param _id bytes32 unique identifier.
-     * @param _amount amount of tokens to stake on DApp's ranking. Used for upvoting + staking more.
+     * @param _amount of tokens to stake on DApp's ranking. Used for upvoting + staking more.
      */
     function upvote(bytes32 _id, uint _amount) public { 
         require(_amount > 0, "You must send some SNT in order to upvote");
@@ -141,8 +141,8 @@ contract DAppStore {
     /**
      * @dev Sends SNT directly to the developer and lowers the DApp's effective balance in the Store.
      * @param _id bytes32 unique identifier.
-     * @param _percent_down the % of SNT staked on the DApp they'd like "remove" from the rank.
-     * @param _amount the amount of SNT they estimate is needed to buy the required votes.
+     * @param _percent_down the % of SNT staked on the DApp user would like "remove" from the rank.
+     * @param _amount of SNT they estimate is needed to buy the required votes.
      */
     function downvote(bytes32 _id, uint _percent_down, uint _amount) public { 
         require(1/100 <= _percent_down <= 99/100, "You must effect the ranking by more than 1, and less than 99, percent");
@@ -178,7 +178,7 @@ contract DAppStore {
      * @dev Developers can withdraw an amount not more than what was available of the
         SNT they originally staked minus what they have already received back in downvotes.
      * @param _id bytes32 unique identifier.
-     * @param _amount amount of tokens to withdraw from DApp's overall balance.
+     * @param _amount of tokens to withdraw from DApp's overall balance.
      */
     function withdraw(bytes32 _id, uint _amount) public { 
         uint dappIdx = id2index[_id];

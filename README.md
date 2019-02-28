@@ -80,6 +80,8 @@ Instantiates the MiniMe (or EIP20) interface so that the contract can receive an
  
 Accepts some nominal amount of tokens (> 0) and creates a new Data struct with the `_id` passed to it, setting the new struct's `balance` and using that to calculate `balance`, `rate`, `available`, `v_minted_` and `e_balance` (which is == `balance` at first).
 
+Emit event containing new `e_balance`.
+
 2. **upvoteEffect**
     1.  params: `(uint _id, uint _amount)`
 
