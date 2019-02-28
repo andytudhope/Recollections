@@ -38,13 +38,13 @@ Making the ranking algorithm transparent - and giving users an ability to affect
 An effective economic ranking mechanism, selected with the option `Ranked by SNT` (one of many filters), answers the following user stories from our [swarm doc](https://github.com/status-im/swarms/blob/master/ideas/317-dapps-store.md).
 
 1. **I want to be confident a DApp is usable / not a scam.**
-    a. Having an economic mechanism ensures that the DApps which rank highly quite literally are those providing the "most value" to the community. This is because SNT staked to rank is locked out of circulation, meaning each SNT stakeholder's own holding of SNT should increase in value. Coincidentally, the more SNT staked in total in the store, the stronger the assurance that any given DApp which ranks highly is useful and not a scam.
+    1. Having an economic mechanism ensures that the DApps which rank highly quite literally are those providing the "most value" to the community. This is because SNT staked to rank is locked out of circulation, meaning each SNT stakeholder's own holding of SNT should increase in value. Coincidentally, the more SNT staked in total in the store, the stronger the assurance that any given DApp which ranks highly is useful and not a scam.
 2. **As an SNT stakeholder, I would like to signal using SNT that I find a listing useful.**
-    a. Achieved by "upvoting" in the UI. Importantly, upvotes do not effect the bonded curve, users simply donate SNT 1-1 directly to the DApp's `balance`.
+    1. Achieved by "upvoting" in the UI. Importantly, upvotes do not effect the bonded curve, users simply donate SNT 1-1 directly to the DApp's `balance`.
 3. **As an SNT stakeholder, I would like to signal using SNT that I find a listing to be not useful/poor quality/etc.**
-    a. Achieved, on an increasingly cheap basis the more well-resourced a DApp is, by "downvoting" in the UI. Uses an exponential bonded curve to mint downvotes.
+    1. Achieved, on an increasingly cheap basis the more well-resourced a DApp is, by "downvoting" in the UI. Uses an exponential bonded curve to mint downvotes.
 4. **As a DApp developer, I want to be able to propose/vote my DApp for inclusion.**
-    a. Anybody can submit a DApp for inclusion and "vote" on it by calling `upvote` and adding SNT to its `balance`.
+    1. Anybody can submit a DApp for inclusion and "vote" on it by calling `upvote` and adding SNT to its `balance`.
 
 ## UI Mock-ups
 
@@ -127,8 +127,8 @@ What metadata we need to identify each DApp uniquely is still a topic for resear
 ## Potential Attacks
 
 1. **Sybil resistance?**
-    a. If I create a lot of accounts for one DApp, will that increase it's ranking?
-    b. If I vote for one DApp from lots of different accounts, in small amounts, rather than in 1 big amount from a single account, what effect does it have?
+    1. If I create a lot of accounts for one DApp, will that increase it's ranking?
+    2. If I vote for one DApp from lots of different accounts, in small amounts, rather than in 1 big amount from a single account, what effect does it have?
 
 Creating many accounts for one DApp is not possible - each DApp is uniquely identified and by its `id` and ranked only by the amount of SNT staked on it. In the same way, there is no quadratic effect in this set up, so staking for a DApp from lots of different accounts in small amounts has no greater/lesser effect on its ranking than staking 1 large amount from a single account.
 
