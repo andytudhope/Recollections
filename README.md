@@ -168,6 +168,6 @@ Moreover, having SNT is not required to see (and benefit from) a well-curated li
 From the perspective of DApp Developers - they must still spend some capital to rank well, just as they currently do with SEO and AdWords etc.,  but _they stand to earn most of that back_ if the community votes on their product/service, and they can withdraw their stake at any time. The algorithm is entirely transparent and they know where they stand and why at all times.
 
 ## Copyright
-Copyright and related rights waived via [CC0](https://creativecommons.org/publicdomain/zero/1.0/).
+Copyright and related rights for this specification waived via [CC0](https://creativecommons.org/publicdomain/zero/1.0/).
 
 
