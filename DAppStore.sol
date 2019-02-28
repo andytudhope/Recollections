@@ -127,7 +127,7 @@ contract DAppStore {
      * @return cost
      */
     function downvoteCost(bytes32 _id, uint _percent_down) public returns(uint b, uint v_r, uint c) { 
-        require(1/100 <= _percent_down <= 5/100, "You must effect the ranking by more than 1, and less than 99, percent");
+        require(1/100 <= _percent_down <= 5/100, "You must effect the ranking by more than 1, and less than 5, percent");
         
         uint dappIdx = id2index[_id];
         Data memory d = dapps[dappIdx];
@@ -145,7 +145,7 @@ contract DAppStore {
      * @param _percent_down the % of SNT staked on the DApp user would like "remove" from the rank.
      */
     function downvote(bytes32 _id, uint _percent_down) public { 
-        require(1/100 <= _percent_down <= 5/100, "You must effect the ranking by more than 1, and less than 99, percent");
+        require(1/100 <= _percent_down <= 5/100, "You must effect the ranking by more than 1, and less than 5, percent");
          
         uint dappIdx = id2index[_id];
         Data storage d = dapps[dappIdx];
