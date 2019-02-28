@@ -45,10 +45,11 @@ contract DAppStore {
     event downvote(bytes32 id, uint cost, uint newEffectiveBalance);
     event withdraw(bytes32 id, uint amount, uint newEffectiveBalance);
     
-    
-    /*
-        Anyone can create a DApp (i.e an arb piece of data this contract happens to care about).
-    */
+    /**
+     * @dev Anyone can create a DApp (i.e an arb piece of data this contract happens to care about).
+     * @param _id bytes32 unique identifier.
+     * @param _amount amount of tokens to stake on initial ranking.
+     */
     function createDApp(bytes32 _id, uint _amount) public { 
         require(_amount > 0, "You must spend some SNT to submit a ranking in order to avoid spam");
         require (_amount < max, "You cannot stake more SNT than the ceiling dictates");
@@ -73,14 +74,13 @@ contract DAppStore {
 
         emit DAppCreated(_id, _amount);
     }
-    
-    
-    /* 
-        For use in the UI to show how the effective balance changes as a result of your donation.
-        This does _not_ mean it uses the curve: funds donated in upvoting go directly
-        to the Dapp's balance in the store, not the developer's pocket. It's just that actual
-        ranking is done on e_balance, and this must still be recalculated, even for upvotes.
-    */
+
+    /**
+     * @dev Used in UI to display effect on ranking of user's donation
+     * @param _id bytes32 unique identifier.
+     * @param _amount amount of tokens to stake/"donate" to this DApp's ranking.
+     * @return effect of donation on DApp's e_balance 
+     */
     function upvoteEffect(bytes32 _id, uint _amount) public returns(uint effect) { 
         uint dappIdx = id2index[_id];
         Data memory d = dapps[dappIdx];
@@ -95,11 +95,12 @@ contract DAppStore {
         return (mEBalance - d.e_balance);
     }
     
-    
-    /*
-        Upvoting sends SNT directly to the contract, not to the developer and this gets
+    /**
+     * @dev Sends SNT directly to the contract, not the developer. This gets
         added to the DApp's balance, no curve required.
-    */
+     * @param _id bytes32 unique identifier.
+     * @param _amount amount of tokens to stake on DApp's ranking.
+     */
     function upvote(bytes32 _id, uint _amount) public { 
         require(_amount > 0, "You must send some SNT in order to upvote");
         
@@ -120,12 +121,13 @@ contract DAppStore {
         emit upvote(_id, _amount, d.e_balance);
     }
     
-    
-    /*
-        For use in the UI, along with a slider that allows you to pick the % effect
-        you want to have on a DApp's rankings before calculating the cost to you.
-        Designs here: https://www.figma.com/file/MYWmd1buvc2AMvUmFP9w42t5/Discovery?node-id=604%3A5110
-    */
+    /**
+     * @dev Used in the UI along with a slider to let the user pick 
+     their desired % effect on the DApp's ranking.
+     * @param _id bytes32 unique identifier.
+     * @param _percent_down the % of SNT staked on the DApp they'd like "remove" from the rank.
+     * @return cost
+     */
     function downvoteCost(bytes32 _id, uint _percent_down) public returns(uint cost) { 
         require(0.01 <= _percent_down <= 0.99, "You must effect the ranking by more than 1, and less than 99, percent");
         
@@ -138,13 +140,13 @@ contract DAppStore {
         return cost = (d.available / (d.v_minted - (d.v_cast + votes_required))) * (votes_required / _percent_down / 100);
     }
     
-    
-    /*
-        Downvoting sends SNT back to the developer of the DApp, while lowering the DApp's
+    /**
+     * @dev Sends SNT directly to the developer and lowers the DApp's
         effective balance in the Store.
-        The reason that _percent_down is still a param is because figuring out the effect on the
-        effective balance without it requires integration, which is not nice in Solidity.
-    */
+     * @param _id bytes32 unique identifier.
+     * @param _percent_down the % of SNT staked on the DApp they'd like "remove" from the rank.
+     * @param _amount the amount of SNT they estimate is needed to buy the required votes.
+     */
     function downvote(bytes32 _id, uint _percent_down, uint _amount) public { 
         require(0.01 <= _percent_down <= 0.99, "You must effect the ranking by more than 1, and less than 99, percent");
         require(_amount > 0, "You must send some SNT in order to downvote");
@@ -166,9 +168,8 @@ contract DAppStore {
         d.e_balance = d.e_balance - balance_down_by;
         
         /*  
-            TODO: This implies users must grant allowance to the DApp store
-            when upvoting, and then for each individual DApp they want to downvote. Could
-            be an annoying UI feature if so. Is there a better way?
+            TODO: Implement a different means of allowance/sends in line
+            with https://github.com/status-im/ens-usernames/blob/04bd8921516584a25a0bd9af15ddec3c4830265a/contracts/registry/UsernameRegistrar.sol#L543
         */
         require(SNT.allowance(msg.sender, d.developer) >= cost);
         require(SNT.transferFrom(msg.sender, d.developer, cost));
@@ -176,11 +177,12 @@ contract DAppStore {
         emit downvote(_id, cost, d.e_balance);
     }
     
-    
-    /*  
-        Developers can withdraw an amount not more than what was available of the
+    /**
+     * @dev Developers can withdraw an amount not more than what was available of the
         SNT they originally staked minus what they have already received back in downvotes.
-    */
+     * @param _id bytes32 unique identifier.
+     * @param _amount amount of tokens to withdraw from DApp's overall balance.
+     */
     function withdraw(bytes32 _id, uint _amount) public { 
         uint dappIdx = id2index[_id];
         Data storage d = dapps[dappIdx];
