@@ -143,7 +143,6 @@ contract DAppStore {
      * @dev Sends SNT directly to the developer and lowers the DApp's effective balance in the Store.
      * @param _id bytes32 unique identifier.
      * @param _percent_down the % of SNT staked on the DApp user would like "remove" from the rank.
-     * @param _amount of SNT they estimate is needed to buy the required votes.
      */
     function downvote(bytes32 _id, uint _percent_down) public { 
         require(1/100 <= _percent_down <= 99/100, "You must effect the ranking by more than 1, and less than 99, percent");
