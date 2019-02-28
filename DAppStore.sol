@@ -129,7 +129,7 @@ contract DAppStore {
      * @return cost
      */
     function downvoteCost(bytes32 _id, uint _percent_down) public returns(uint cost) { 
-        require(0.01 <= _percent_down <= 0.99, "You must effect the ranking by more than 1, and less than 99, percent");
+        require(1/100 <= _percent_down <= 99/100, "You must effect the ranking by more than 1, and less than 99, percent");
         
         uint dappIdx = id2index[_id];
         Data memory d = dapps[dappIdx];
@@ -148,7 +148,7 @@ contract DAppStore {
      * @param _amount the amount of SNT they estimate is needed to buy the required votes.
      */
     function downvote(bytes32 _id, uint _percent_down, uint _amount) public { 
-        require(0.01 <= _percent_down <= 0.99, "You must effect the ranking by more than 1, and less than 99, percent");
+        require(1/100 <= _percent_down <= 99/100, "You must effect the ranking by more than 1, and less than 99, percent");
         require(_amount > 0, "You must send some SNT in order to downvote");
          
         uint dappIdx = id2index[_id];
