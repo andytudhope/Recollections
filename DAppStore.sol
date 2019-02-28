@@ -164,7 +164,7 @@ contract DAppStore {
         d.v_cast = d.v_cast + v_r;
         d.e_balance = d.e_balance - b;
         
-        emit downvote(_id, cost, d.e_balance);
+        emit downvote(_id, c, d.e_balance);
     }
     
     /**
