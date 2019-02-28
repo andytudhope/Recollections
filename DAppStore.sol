@@ -153,17 +153,17 @@ contract DAppStore {
         require(d.id == _id, "Error fetching correct data");
         
         var (b, v_r, c) = downvoteCost(_id, _percent_down);
-        
-        d.available = d.available - c;
-        d.v_cast = d.v_cast + v_r;
-        d.e_balance = d.e_balance - b;
-        
+
         /*  
             TODO: Implement a different means of allowance/sends in line
             with https://github.com/status-im/ens-usernames/blob/04bd8921516584a25a0bd9af15ddec3c4830265a/contracts/registry/UsernameRegistrar.sol#L543
         */
-        require(SNT.allowance(msg.sender, d.developer) >= cost);
-        require(SNT.transferFrom(msg.sender, d.developer, cost));
+        require(SNT.allowance(msg.sender, d.developer) >= c);
+        require(SNT.transferFrom(msg.sender, d.developer, c));
+        
+        d.available = d.available - c;
+        d.v_cast = d.v_cast + v_r;
+        d.e_balance = d.e_balance - b;
         
         emit downvote(_id, cost, d.e_balance);
     }
