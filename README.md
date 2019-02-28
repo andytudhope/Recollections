@@ -146,7 +146,7 @@ You can still never earn back quite as much as you initially staked, enforced by
 
 4. **What is left in the store when a DApp withdraws the SNT it staked?**
 
-Simply `balance - available`, i.e. some small amount of SNT not available to be withdrawn, which depends on how much is at stake when `withdraw` is called (because `rate = 1 - (balance/max)`).
+Simply `balance - available`, i.e. some small amount of SNT not available to be withdrawn.
 
 5. **The majority of the cost to downvote comes from the last ~5%, so moving a DApp down 80%, say, is not that expensive relative to the effect you have.**
 
