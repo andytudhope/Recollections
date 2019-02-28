@@ -22,8 +22,16 @@ This is why this is not just a solution for a DappStore, but a general solution 
 
 PageRank's big insight when the web got going was that sorting information effectively was more important than displaying it well, which is what everyone else was trying to do. 
 
+People ask, “But, shouldn’t the DApps that appear the first be, the most useful or provide the most value to the community or something?” Yes, they absolutely should.
+
+As we are all slowly figuring out though, the problem is with defining “value to the community”. Is that downloads, stars, usage metrics, customer feedback? All of these things are suboptimal and easy to manipulate.
+
 The big insight here is that, in the decentralized web, the simple fact that there is, by definition, no central authority means it's not about sorting at all. 
-It's about curating, and we need to figure out the way to do that most optimally - which is what this curve and contract are. (Maybe not most optimally, but close anyway).
+It's about curating, and we need to figure out the way to do that most optimally - which is what this curve and contract are trying to get at.
+
+It’s worth re-iterating that I think this is a general system that could be used by any community/individual to curate information they are interested in (with the only requirement being that they have some fixed and fungible constant like TOTAL SNT to optimise against).
+
+That is, though I have described it using the example of a DApp store above, this method of curating information does not have to be for developers/DApps only, though that’s a use case of particular interest to Status right now.
 
 **I mean with a centralised authority bad apps get pulled immediately. If it's decentralised the curve has to kick in first, right? Isn't that a problem/too slow?**
 
