@@ -120,7 +120,7 @@ Emit event containing new `e_balance`.
 6. **??? updateCeiling**
     1. params: `(uint _newCeiling)`
 
-Potentially a simple multisig governance mechanism to change the ceiling dynamically in response to demand?
+Potentially a simple multisig governance mechanism to change the ceiling dynamically in response to demand? It's not trivial to add though, because you would need to update most of the fields in each `Data` struct in storage, which could exceed the gas limit if there are large numbers of DApps in the store...
 
 7. **receiveApproval**
     1. params: `(address _from, uint256 _amount, address _token, bytes _data)`
