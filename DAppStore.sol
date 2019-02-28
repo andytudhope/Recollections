@@ -96,8 +96,7 @@ contract DAppStore {
     }
     
     /**
-     * @dev Sends SNT directly to the contract, not the developer. This gets
-        added to the DApp's balance, no curve required.
+     * @dev Sends SNT directly to the contract, not the developer. This gets added to the DApp's balance, no curve required.
      * @param _id bytes32 unique identifier.
      * @param _amount amount of tokens to stake on DApp's ranking. Used for upvoting + staking more.
      */
@@ -122,8 +121,7 @@ contract DAppStore {
     }
     
     /**
-     * @dev Used in the UI along with a slider to let the user pick 
-     their desired % effect on the DApp's ranking.
+     * @dev Used in the UI along with a slider to let the user pick their desired % effect on the DApp's ranking.
      * @param _id bytes32 unique identifier.
      * @param _percent_down the % of SNT staked on the DApp user would like "remove" from the rank.
      * @return cost
@@ -141,8 +139,7 @@ contract DAppStore {
     }
     
     /**
-     * @dev Sends SNT directly to the developer and lowers the DApp's
-        effective balance in the Store.
+     * @dev Sends SNT directly to the developer and lowers the DApp's effective balance in the Store.
      * @param _id bytes32 unique identifier.
      * @param _percent_down the % of SNT staked on the DApp they'd like "remove" from the rank.
      * @param _amount the amount of SNT they estimate is needed to buy the required votes.
