@@ -21,7 +21,7 @@ contract DAppStore {
         Alternative to a static ceiling: create an `owner` of this contract, set it to a multisig, give that owner multisig
         permission to alter the ceiling and promise to do so based on the results of voting in https://vote.status.im
     */
-    uint8 ceiling = 0.4;
+    uint ceiling = 0.4;
     // The max amount of tokens it is possible to stake, as a percentage of the total in circulation
     uint max = total * (ceiling/100);
     
@@ -145,7 +145,7 @@ contract DAppStore {
         The reason that _percent_down is still a param is because figuring out the effect on the
         effective balance without it requires integration, which is not nice in Solidity.
     */
-    function downvote(bytes32 _id, uint8 _percent_down, uint _amount) public { 
+    function downvote(bytes32 _id, uint _percent_down, uint _amount) public { 
         require(0.01 <= _percent_down <= 0.99, "You must effect the ranking by more than 1, and less than 99, percent");
         require(_amount > 0, "You must send some SNT in order to downvote");
          
@@ -199,7 +199,6 @@ contract DAppStore {
         d.e_balance = d.balance - ((d.v_cast/(1/d.rate))*(d.available/d.v_minted));
         
         // TODO: Check this works!
-        SNT.allowance(address(this), d.developer) = _amount;
         SNT.transferFrom(address(this), d.developer, _amount);
         
         emit withdraw(_id, _amount, d.e_balance);
