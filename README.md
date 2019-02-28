@@ -68,7 +68,7 @@ Instantiates the MiniMe (or EIP20) interface so that the contract can receive an
 2. `bytes32 id` - a unique identifier for each DApp, potentially with other metadata associated with it, hence the `bytes32`.
 1. `uint balance` - keep track of the total staked on each DApp.
 2. `uint rate = 1 - (balance/max)` - used to calculate `available` and `v_minted`.
-3. `uint available = balance * rate` - amount of SNT staked a developer can earn back. NB: this is equivalent the `cost` of all downvotes.
+3. `uint available = balance * rate` - amount of SNT staked a developer can earn back. NB: this is equivalent to the `cost` of all downvotes.
 4. `uint v_minted = available ** (1/rate)` - total downvotes that are "minted".
 5. `uint v_cast` - keep track of the downvotes already cast.
 6. `uint e_balance = balance - ((v_cast/(1/rate))*(available/v_minted))`- the Effective Balance each DApp is actually ranked by in the UI.
@@ -85,7 +85,7 @@ Emit event containing new `e_balance`.
 2. **upvoteEffect**
     1.  params: `(bytes32 _id, uint _amount)`
 
-Mock add `_amount` to `balance`, calculate `mRate`, `mAvailable`, `mVMinted`, and `mEBalance`. Subtract this from the actual `e_balance` and return the difference to be displayed in the UI when a user is choosing how much to "donate" when upvoting.
+Mock add `_amount` to `balance`, calculate `mRate`, `mAvailable`, `mVMinted`, and `mEBalance`. Subtract this from the actual `e_balance` and return the difference to be displayed in the UI to show the user what effect their "donation" will have when upvoting.
  
 3. **upvote**
     1.  params:`(bytes32 _id, uint _amount)`
