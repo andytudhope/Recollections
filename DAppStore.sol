@@ -85,7 +85,7 @@ contract DAppStore is ApproveAndCallFallBack {
 
         id2index[_id] = dappIdx;
 
-        emit DAppCreated(_id, _amount);
+        emit DAppCreated(_id, e_balance);
     }
     
     /**
