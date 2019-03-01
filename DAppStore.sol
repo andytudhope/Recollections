@@ -51,7 +51,7 @@ contract DAppStore is ApproveAndCallFallBack {
 
         ceiling = 40;   // 2 dec fixed pos,  ie: 4 == 0.04,  400 == 4,
         
-        max = total * (ceiling / 10000);
+        max = (total * ceiling) / 10000; // No floating point, but underflow is OK here
     }
     
     /**
@@ -81,7 +81,7 @@ contract DAppStore is ApproveAndCallFallBack {
         d.available = d.balance * d.rate;
         d.v_minted = d.available ** (1/d.rate);
         d.v_cast = 0;
-        d.e_balance = d.balance - ((d.v_cast/(1/d.rate))*(d.available/d.v_minted));
+        d.e_balance = d.balance - ((d.v_cast*d.rate)*(d.available/d.v_minted));
 
         id2index[_id] = dappIdx;
 
@@ -103,7 +103,7 @@ contract DAppStore is ApproveAndCallFallBack {
         uint mRate = 1 - (mBalance/max);
         uint mAvailable = mBalance * mRate;
         uint mVMinted = mAvailable ** (1/mRate);
-        uint mEBalance = mBalance - ((mVMinted/(1/mRate))*(mAvailable/mVMinted));
+        uint mEBalance = mBalance - ((mVMinted*mRate)*(mAvailable/mVMinted));
         
         return (mEBalance - d.e_balance);
     }
@@ -132,7 +132,7 @@ contract DAppStore is ApproveAndCallFallBack {
         d.rate = 1 - (d.balance/max);
         d.available = d.balance * d.rate;
         d.v_minted = d.available ** (1/d.rate);
-        d.e_balance = d.balance - ((d.v_cast/(1/d.rate))*(d.available/d.v_minted));
+        d.e_balance = d.balance - ((d.v_cast*d.rate)*(d.available/d.v_minted));
         
         emit Upvote(_id, _amount, d.e_balance);
     }
@@ -203,7 +203,7 @@ contract DAppStore is ApproveAndCallFallBack {
         if (d.v_cast > d.v_minted) {
             d.v_cast = d.v_minted;
         }
-        d.e_balance = d.balance - ((d.v_cast/(1/d.rate))*(d.available/d.v_minted));
+        d.e_balance = d.balance - ((d.v_cast*d.rate)*(d.available/d.v_minted));
         
         SNT.transferFrom(address(this), d.developer, _amount);
         
