@@ -61,7 +61,7 @@ Instantiates the MiniMe (or EIP20) interface so that the contract can receive an
 #### Constants
 1. `uint total == 3470483788` - total SNT in circulation.
 2. `uint ceiling` - most influential parameter for [_shape_ of curves](https://beta.observablehq.com/@andytudhope/dapp-store-snt-curation-mechanism) (votes minted per DApp and cost to effect a DApp by some set percent for users). Potentially controlled dynamically by governance mechanism.
-3. `uint max = total * (ceiling/10000)` - max SNT that any one DApp can stake.
+3. `uint max = (total * ceiling)/10000` - max SNT that any one DApp can stake.
 
 #### Data Struct
 1. `address developer` - the developer of the DApp, used to send SNT to when `downvote` or `withdraw` is called. 
