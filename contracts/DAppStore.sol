@@ -23,14 +23,15 @@ contract DAppStore is ApproveAndCallFallBack {
 
     // Whether we need more than an id param to identify arbitrary data must still be discussed.
     struct Data {
-        address developer;
-        bytes32 id;
+        bool exists;
         uint balance;
         uint rate;
         uint available;
         uint v_minted;
         uint v_cast;
         uint e_balance;
+        address developer;
+        bytes32 id;
     }
 
     Data[] public dapps;
@@ -71,13 +72,14 @@ contract DAppStore is ApproveAndCallFallBack {
         dapps.length++;
 
         Data storage d = dapps[dappIdx];
+        d.exists = true;
         d.developer = msg.sender;
         d.id = _id;
         d.balance = _amount;
         d.rate = 1 - (d.balance / max);
         d.available = d.balance * d.rate;
         d.v_minted = d.available ** (1 / d.rate);
-        d.v_cast = 0;
+        d.v_cast = 0; // if v_cast is 0 why both including it as a product of d.rate below? makes everything 0
         d.e_balance = d.balance - ((d.v_cast * d.rate) * (d.available / d.v_minted));
 
         id2index[_id] = dappIdx;
@@ -94,6 +96,7 @@ contract DAppStore is ApproveAndCallFallBack {
     function upvoteEffect(bytes32 _id, uint _amount) public view returns (uint effect) {
         uint dappIdx = id2index[_id];
         Data memory d = dapps[dappIdx];
+        require(d.exists, "That app doesn't exist");
         require(d.id == _id, "Error fetching correct data");
 
         uint mBalance = d.balance + _amount;
@@ -119,6 +122,7 @@ contract DAppStore is ApproveAndCallFallBack {
 
         uint dappIdx = id2index[_id];
         Data storage d = dapps[dappIdx];
+        require(d.exists, "That app doesn't exist");
         require(d.id == _id, "Error fetching correct data");
 
         require(d.balance + _amount < max, "You cannot stake more SNT than the ceiling dictates");
@@ -143,6 +147,7 @@ contract DAppStore is ApproveAndCallFallBack {
     function downvoteCost(bytes32 _id, uint _percent_down) public view returns (uint b, uint v_r, uint c) {
         uint dappIdx = id2index[_id];
         Data memory d = dapps[dappIdx];
+        require(d.exists, "That app doesn't exist");
         require(d.id == _id, "Error fetching correct data");
 
         uint balance_down_by = (_percent_down * d.e_balance / 100);
@@ -165,6 +170,7 @@ contract DAppStore is ApproveAndCallFallBack {
 
         uint dappIdx = id2index[_id];
         Data storage d = dapps[dappIdx];
+        require(d.exists, "That app doesn't exist");
         require(d.id == _id, "Error fetching correct data");
 
         (uint b, uint v_r, uint c) = downvoteCost(_id, _percent_down);
@@ -188,6 +194,7 @@ contract DAppStore is ApproveAndCallFallBack {
     function withdraw(bytes32 _id, uint _amount) public {
         uint dappIdx = id2index[_id];
         Data storage d = dapps[dappIdx];
+        require(d.exists, "That app doesn't exist");
         require(d.id == _id, "Error fetching correct data");
 
         require(msg.sender == d.developer, "Only the developer can withdraw SNT staked on this data");
