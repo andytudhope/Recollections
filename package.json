@@ -10,7 +10,6 @@
     "lint:fix": "solium  --dir contracts/ --fix",
     "fivepointzero": "prettier --write --tab-width 4 --print-width 140 'contracts/**/*.sol'"
   },
-  "main": "index.js",
   "directories": {
     "test": "test"
   },

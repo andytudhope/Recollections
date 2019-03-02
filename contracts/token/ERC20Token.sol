@@ -40,7 +40,7 @@ interface ERC20Token {
      * @param _spender The address of the account able to transfer the tokens
      * @return Amount of remaining tokens allowed to spent
      */
-    function allowance(address _owner, address _spender) external view returns (uint256 remaining);
+    function allowance(address _owner, address _spender) external view returns (uint remaining);
 
     /**
      * @notice return total supply of tokens

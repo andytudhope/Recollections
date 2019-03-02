@@ -79,7 +79,7 @@ contract DAppStore is ApproveAndCallFallBack {
         d.rate = 1 - (d.balance / max);
         d.available = d.balance * d.rate;
         d.v_minted = d.available ** (1 / d.rate);
-        d.v_cast = 0; // if v_cast is 0 why both including it as a product of d.rate below? makes everything 0
+        d.v_cast = 0; // QUESTION: if v_cast is 0 why both including it as a product of d.rate below? makes everything 0
         d.e_balance = d.balance - ((d.v_cast * d.rate) * (d.available / d.v_minted));
 
         id2index[_id] = dappIdx;

@@ -1,28 +1,30 @@
-// var MiniMeTokenInterface = artifacts.require('./MiniMeTokenInterface.sol')
-var MockContract = artifacts.require('./MockContract.sol')
-var DAppStore = artifacts.require('./DAppStore.sol')
-var BigNumber = require('bignumber.js')
-let gasPrice = 1000000000 // 1GWEI
+const MiniMeTokenInterface = artifacts.require('./MiniMeTokenInterface.sol')
+const MockContract = artifacts.require('./MockContract.sol')
+const DAppStore = artifacts.require('./DAppStore.sol')
+const BigNumber = require('bignumber.js')
+const gasPrice = 1000000000 // 1GWEI
 
-let _ = '        '
+const _ = '        '
+const emptyAdd = '0x' + '0'.repeat(40)
 
 contract('DAppStore', async function(accounts) {
-  let dAppStore
+  let dAppStore, mockToken, mock
 
   before(done => {
     ;(async () => {
       try {
-        var totalGas = new BigNumber(0)
+        let totalGas = new BigNumber(0)
 
         // Deploy MockContract.sol
-        const mock = await MockContract.new()
+        mock = await MockContract.new()
+        mockToken = await MiniMeTokenInterface.at(mock.address)
 
         // Deploy DAppStore.sol
         dAppStore = await DAppStore.new(mock.address)
-        var tx = await web3.eth.getTransactionReceipt(dAppStore.transactionHash)
+        let tx = await web3.eth.getTransactionReceipt(dAppStore.transactionHash)
         totalGas = totalGas.plus(tx.gasUsed)
         console.log(_ + tx.gasUsed + ' - Deploy dAppStore')
-        dAppStore = await DAppStore.deployed()
+
 
         console.log(_ + '-----------------------')
         console.log(_ + totalGas.toFormat(0) + ' - Total Gas')
@@ -35,11 +37,26 @@ contract('DAppStore', async function(accounts) {
   })
 
   describe('DAppStore.sol', function() {
-    it('should pass', async function() {
-      assert(
-        true === true,
-        'this is true'
-      )
+    it('should deploy simple dapp', async function() {
+
+      const transferFrom = mockToken.contract.methods.transferFrom(emptyAdd, emptyAdd, 0).encodeABI()
+      await mock.givenMethodReturnBool(transferFrom, true)
+
+      const transfer = mockToken.contract.methods.transfer(emptyAdd, 0).encodeABI()
+      await mock.givenMethodReturnBool(transfer, true)
+      
+      const balanceOf = mockToken.contract.methods.balanceOf(emptyAdd).encodeABI()
+      await mock.givenMethodReturnUint(balanceOf, (1e18).toString(10))
+      
+      const allowance = mockToken.contract.methods.allowance(emptyAdd, emptyAdd).encodeABI()
+      await mock.givenMethodReturnUint(allowance, (1e18).toString(10))
+
+      const firstDapp = web3.utils.sha3('MyFirstDapp')
+
+      let tx = await dAppStore.createDApp(firstDapp, (1e3).toString(10))
+      console.log(tx.logs)
+
+      assert(tx.receipt.status, 'tx failed')
     })
 
   })
