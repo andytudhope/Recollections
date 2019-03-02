@@ -1,10 +1,9 @@
-pragma solidity >=0.4.22 <0.6.0;
+pragma solidity ^0.5.0;
 
 // Abstract contract for the full ERC 20 Token standard
 // https://github.com/ethereum/EIPs/issues/20
 
 interface ERC20Token {
-
     /**
      * @notice send `_value` token to `_to` from `msg.sender`
      * @param _to The address of the recipient

@@ -1,0 +1,41 @@
+{
+  "name": "recollections",
+  "version": "0.0.1",
+  "description": "",
+  "scripts": {
+    "test": "truffle test test/*.test.js",
+    "deploy": "truffle migrate --reset --compile-all",
+    "lint": "solium --dir contracts/",
+    "lint:watch": "solium --watch --dir contracts/",
+    "lint:fix": "solium  --dir contracts/ --fix",
+    "fivepointzero": "prettier --write --tab-width 4 --print-width 140 'contracts/**/*.sol'"
+  },
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {
+    "bignumber.js": "^8.0.1",
+    "dotenv": "^5.0.1",
+    "openzeppelin-solidity": "^2.1.1",
+    "prettier": "^1.15.3",
+    "prettier-plugin-solidity-refactor": "^1.0.0-alpha.14",
+    "solium": "^1.1.7",
+    "truffle": "^5.0.2",
+    "truffle-hdwallet-provider": "^1.0.0-web3one.3"
+  },
+  "dependencies": {
+    "@gnosis.pm/mock-contract": "^3.0.7"
+  },
+  "repository": {
+    "type": "",
+    "url": ""
+  },
+  "keywords": [
+    "truffle",
+    "ethereum",
+    "web3"
+  ],
+  "author": "",
+  "license": ""
+}

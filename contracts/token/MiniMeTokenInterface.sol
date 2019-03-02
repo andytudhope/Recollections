@@ -1,10 +1,9 @@
-pragma solidity >=0.4.22 <0.6.0;
+pragma solidity ^0.5.0;
 
 import "./ERC20Token.sol";
-
+import "@gnosis.pm/mock-contract/contracts/MockContract.sol";
 
 contract MiniMeTokenInterface is ERC20Token {
-
     /**
      * @notice `msg.sender` approves `_spender` to send `_amount` tokens on
      *  its behalf, and then a function is triggered in the contract that is
@@ -14,13 +13,7 @@ contract MiniMeTokenInterface is ERC20Token {
      * @param _amount The amount of tokens to be approved for transfer
      * @return True if the function call was successful
      */
-    function approveAndCall(
-        address _spender,
-        uint256 _amount,
-        bytes _extraData
-    ) 
-        external 
-        returns (bool success);
+    function approveAndCall(address _spender, uint256 _amount, bytes calldata _extraData) external returns (bool success);
 
     /**    
      * @notice Creates a new clone token with the initial distribution being
@@ -35,14 +28,12 @@ contract MiniMeTokenInterface is ERC20Token {
      * @return The address of the new MiniMeToken Contract
      */
     function createCloneToken(
-        string _cloneTokenName,
+        string memory _cloneTokenName,
         uint8 _cloneDecimalUnits,
-        string _cloneTokenSymbol,
+        string memory _cloneTokenSymbol,
         uint _snapshotBlock,
         bool _transfersEnabled
-    ) 
-        public
-        returns(address);
+    ) public returns (address);
 
     /**    
      * @notice Generates `_amount` tokens that are assigned to `_owner`
@@ -50,12 +41,7 @@ contract MiniMeTokenInterface is ERC20Token {
      * @param _amount The quantity of tokens generated
      * @return True if the tokens are generated correctly
      */
-    function generateTokens(
-        address _owner,
-        uint _amount
-    )
-        public
-        returns (bool);
+    function generateTokens(address _owner, uint _amount) public returns (bool);
 
     /**
      * @notice Burns `_amount` tokens from `_owner`
@@ -63,12 +49,7 @@ contract MiniMeTokenInterface is ERC20Token {
      * @param _amount The quantity of tokens to burn
      * @return True if the tokens are burned correctly
      */
-    function destroyTokens(
-        address _owner,
-        uint _amount
-    ) 
-        public
-        returns (bool);
+    function destroyTokens(address _owner, uint _amount) public returns (bool);
 
     /**        
      * @notice Enables token holders to transfer their tokens freely if true
@@ -90,19 +71,13 @@ contract MiniMeTokenInterface is ERC20Token {
      * @param _blockNumber The block number when the balance is queried
      * @return The balance at `_blockNumber`
      */
-    function balanceOfAt(
-        address _owner,
-        uint _blockNumber
-    ) 
-        public
-        constant
-        returns (uint);
+    function balanceOfAt(address _owner, uint _blockNumber) public view returns (uint);
 
     /**
      * @notice Total amount of tokens at a specific `_blockNumber`.
      * @param _blockNumber The block number when the totalSupply is queried
      * @return The total amount of tokens at `_blockNumber`
      */
-    function totalSupplyAt(uint _blockNumber) public view returns(uint);
+    function totalSupplyAt(uint _blockNumber) public view returns (uint);
 
 }
