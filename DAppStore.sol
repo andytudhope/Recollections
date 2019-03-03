@@ -2,6 +2,7 @@ pragma solidity >=0.4.22 <0.6.0;
 
 import "./token/MiniMeTokenInterface.sol";
 import "./token/ApproveAndCallFallBack.sol";
+import {SafeMath} from "./SafeMath.sol";
 
 
 contract DAppStore is ApproveAndCallFallBack {
@@ -51,7 +52,7 @@ contract DAppStore is ApproveAndCallFallBack {
 
         ceiling = 40;   // 2 dec fixed pos,  ie: 4 == 0.04,  400 == 4,
         
-        max = (total * ceiling) / 10000; // No floating point, but underflow is OK here
+        max = SafeMath.mul(total, ceiling) / 10000; // No floating point, but underflow is OK here
     }
     
     /**
@@ -71,17 +72,17 @@ contract DAppStore is ApproveAndCallFallBack {
         
         uint dappIdx = dapps.length;
         
-        dapps.length++;
+        dapps.length = SafeMath.add(dapps.length, 1);
 
         Data storage d = dapps[dappIdx];
         d.developer = msg.sender;
         d.id = _id;
         d.balance = _amount;
-        d.rate = 1 - (d.balance/max);
-        d.available = d.balance * d.rate;
+        d.rate = SafeMath.sub(1, d.balance/max);
+        d.available = SafeMath.mul(d.balance, d.rate);
         d.v_minted = d.available ** (1/d.rate);
         d.v_cast = 0;
-        d.e_balance = d.balance - ((d.v_cast*d.rate)*(d.available/d.v_minted));
+        d.e_balance = SafeMath.sub(d.balance, SafeMath.mul(d.v_cast*d.rate, d.available/d.v_minted));
 
         id2index[_id] = dappIdx;
 
@@ -99,13 +100,13 @@ contract DAppStore is ApproveAndCallFallBack {
         Data memory d = dapps[dappIdx];
         require(d.id == _id, "Error fetching correct data");
         
-        uint mBalance = d.balance + _amount;
-        uint mRate = 1 - (mBalance/max);
-        uint mAvailable = mBalance * mRate;
+        uint mBalance = SafeMath.add(d.balance, _amount);
+        uint mRate = SafeMath.sub(1, mBalance/max);
+        uint mAvailable = SafeMath.mul(mBalance, mRate);
         uint mVMinted = mAvailable ** (1/mRate);
-        uint mEBalance = mBalance - ((mVMinted*mRate)*(mAvailable/mVMinted));
+        uint mEBalance = SafeMath.sub(mBalance, SafeMath.mul(SafeMath.mul(mVMinted, mRate), mAvailable/mVMinted));
         
-        return (mEBalance - d.e_balance);
+        return SafeMath.sub(mEBalance, d.e_balance);
     }
     
     /**
@@ -128,11 +129,11 @@ contract DAppStore is ApproveAndCallFallBack {
         require(SNT.allowance(_from, address(this)) >= _amount, "Not enough SNT allowance");
         require(SNT.transferFrom(_from, address(this), _amount), "Transfer failed");
         
-        d.balance = d.balance + _amount;
-        d.rate = 1 - (d.balance/max);
-        d.available = d.balance * d.rate;
+        d.balance = SafeMath.add(d.balance, _amount);
+        d.rate = SafeMath.sub(1, d.balance/max);
+        d.available = SafeMath.mul(d.balance, d.rate);
         d.v_minted = d.available ** (1/d.rate);
-        d.e_balance = d.balance - ((d.v_cast*d.rate)*(d.available/d.v_minted));
+        d.e_balance = SafeMath.sub(d.balance, SafeMath.mul(d.v_cast*d.rate, d.available/d.v_minted));
         
         emit Upvote(_id, _amount, d.e_balance);
     }
@@ -148,9 +149,9 @@ contract DAppStore is ApproveAndCallFallBack {
         Data memory d = dapps[dappIdx];
         require(d.id == _id, "Error fetching correct data");
         
-        uint balance_down_by = (_percent_down * d.e_balance / 100);
-        uint votes_required = (balance_down_by * d.v_minted * d.rate) / d.available;
-        uint cost = (d.available / (d.v_minted - (d.v_cast + votes_required))) * (votes_required / _percent_down / 10000);
+        uint balance_down_by = SafeMath.mul(_percent_down, d.e_balance) / 100;
+        uint votes_required = SafeMath.mul(SafeMath.mul(balance_down_by, d.v_minted), d.rate) / d.available;
+        uint cost = SafeMath.mul(d.available / (SafeMath.sub(d.v_minted, SafeMath.add(d.v_cast, votes_required))), votes_required / _percent_down / 10000);
         return (balance_down_by, votes_required, cost);
     }
     
@@ -175,9 +176,9 @@ contract DAppStore is ApproveAndCallFallBack {
         require(SNT.allowance(_from, d.developer) >= c, "Not enough SNT allowance");
         require(SNT.transferFrom(_from, d.developer, c), "Transfer failed");
         
-        d.available = d.available - c;
-        d.v_cast = d.v_cast + v_r;
-        d.e_balance = d.e_balance - b;
+        d.available = SafeMath.sub(d.available, c);
+        d.v_cast = SafeMath.add(d.v_cast, v_r);
+        d.e_balance = SafeMath.sub(d.e_balance, b);
         
         emit Downvote(_id, c, d.e_balance);
     }
@@ -196,14 +197,14 @@ contract DAppStore is ApproveAndCallFallBack {
         require(msg.sender == d.developer, "Only the developer can withdraw SNT staked on this data");
         require(_amount <= d.available, "You can only withdraw a percentage of the SNT staked, less what you have already received");
         
-        d.balance = d.balance - _amount;
-        d.rate = 1 - (d.balance/max);
-        d.available = d.balance * d.rate;
+        d.balance = SafeMath.sub(d.balance, _amount);
+        d.rate = SafeMath.sub(1, d.balance/max);
+        d.available = SafeMath.mul(d.balance, d.rate);
         d.v_minted = d.available ** (1/d.rate);
         if (d.v_cast > d.v_minted) {
             d.v_cast = d.v_minted;
         }
-        d.e_balance = d.balance - ((d.v_cast*d.rate)*(d.available/d.v_minted));
+        d.e_balance = SafeMath.sub(d.balance, SafeMath.mul(d.v_cast*d.rate, d.available/d.v_minted));
         
         SNT.transferFrom(address(this), d.developer, _amount);
         
