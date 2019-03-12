@@ -31,9 +31,9 @@ contract DAppStore is ApproveAndCallFallBack {
         uint balance;
         uint rate;
         uint available;
-        uint v_minted;
-        uint v_cast;
-        uint e_balance;
+        uint votes_minted;
+        uint votes_cast;
+        uint effective_balance;
     }
     
     Data[] public dapps;
@@ -79,20 +79,20 @@ contract DAppStore is ApproveAndCallFallBack {
         d.balance = _amount;
         d.rate = 1 - (d.balance/max);
         d.available = d.balance * d.rate;
-        d.v_minted = d.available ** (1/d.rate);
-        d.v_cast = 0;
-        d.e_balance = d.balance - ((d.v_cast*d.rate)*(d.available/d.v_minted));
+        d.votes_minted = d.available ** (1/d.rate);
+        d.votes_cast = 0;
+        d.effective_balance = d.balance - ((d.votes_cast*d.rate)*(d.available/d.votes_minted));
 
         id2index[_id] = dappIdx;
 
-        emit DAppCreated(_id, e_balance);
+        emit DAppCreated(_id, effective_balance);
     }
     
     /**
      * @dev Used in UI to display effect on ranking of user's donation
      * @param _id bytes32 unique identifier.
      * @param _amount of tokens to stake/"donate" to this DApp's ranking.
-     * @return effect of donation on DApp's e_balance 
+     * @return effect of donation on DApp's effective_balance 
      */
     function upvoteEffect(bytes32 _id, uint _amount) public view returns(uint effect) { 
         uint dappIdx = id2index[_id];
@@ -105,7 +105,7 @@ contract DAppStore is ApproveAndCallFallBack {
         uint mVMinted = mAvailable ** (1/mRate);
         uint mEBalance = mBalance - ((mVMinted*mRate)*(mAvailable/mVMinted));
         
-        return (mEBalance - d.e_balance);
+        return (mEBalance - d.effective_balance);
     }
     
     /**
@@ -131,10 +131,10 @@ contract DAppStore is ApproveAndCallFallBack {
         d.balance = d.balance + _amount;
         d.rate = 1 - (d.balance/max);
         d.available = d.balance * d.rate;
-        d.v_minted = d.available ** (1/d.rate);
-        d.e_balance = d.balance - ((d.v_cast*d.rate)*(d.available/d.v_minted));
+        d.votes_minted = d.available ** (1/d.rate);
+        d.effective_balance = d.balance - ((d.votes_cast*d.rate)*(d.available/d.votes_minted));
         
-        emit Upvote(_id, _amount, d.e_balance);
+        emit Upvote(_id, _amount, d.effective_balance);
     }
 
     /**
@@ -148,9 +148,9 @@ contract DAppStore is ApproveAndCallFallBack {
         Data memory d = dapps[dappIdx];
         require(d.id == _id, "Error fetching correct data");
         
-        uint balance_down_by = (_percent_down * d.e_balance / 100);
-        uint votes_required = (balance_down_by * d.v_minted * d.rate) / d.available;
-        uint cost = (d.available / (d.v_minted - (d.v_cast + votes_required))) * (votes_required / _percent_down / 10000);
+        uint balance_down_by = (_percent_down * d.effective_balance / 100);
+        uint votes_required = (balance_down_by * d.votes_minted * d.rate) / d.available;
+        uint cost = (d.available / (d.votes_minted - (d.votes_cast + votes_required))) * (votes_required / _percent_down / 10000);
         return (balance_down_by, votes_required, cost);
     }
     
@@ -176,10 +176,10 @@ contract DAppStore is ApproveAndCallFallBack {
         require(SNT.transferFrom(_from, d.developer, c), "Transfer failed");
         
         d.available = d.available - c;
-        d.v_cast = d.v_cast + v_r;
-        d.e_balance = d.e_balance - b;
+        d.votes_cast = d.votes_cast + v_r;
+        d.effective_balance = d.effective_balance - b;
         
-        emit Downvote(_id, c, d.e_balance);
+        emit Downvote(_id, c, d.effective_balance);
     }
     
     /**
@@ -199,15 +199,15 @@ contract DAppStore is ApproveAndCallFallBack {
         d.balance = d.balance - _amount;
         d.rate = 1 - (d.balance/max);
         d.available = d.balance * d.rate;
-        d.v_minted = d.available ** (1/d.rate);
-        if (d.v_cast > d.v_minted) {
-            d.v_cast = d.v_minted;
+        d.votes_minted = d.available ** (1/d.rate);
+        if (d.votes_cast > d.votes_minted) {
+            d.votes_cast = d.votes_minted;
         }
-        d.e_balance = d.balance - ((d.v_cast*d.rate)*(d.available/d.v_minted));
+        d.effective_balance = d.balance - ((d.votes_cast*d.rate)*(d.available/d.votes_minted));
         
         SNT.transferFrom(address(this), d.developer, _amount);
         
-        emit Withdraw(_id, _amount, d.e_balance);
+        emit Withdraw(_id, _amount, d.effective_balance);
     }
     
     /**
