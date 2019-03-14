@@ -39,10 +39,10 @@ contract DAppStore is ApproveAndCallFallBack {
     Data[] public dapps;
     mapping(bytes32 => uint) public id2index;
     
-    event DAppCreated(bytes32 id, uint amount);
-    event Upvote(bytes32 id, uint amount, uint newEffectiveBalance);
-    event Downvote(bytes32 id, uint cost, uint newEffectiveBalance);
-    event Withdraw(bytes32 id, uint amount, uint newEffectiveBalance);
+    event DAppCreated(bytes32 indexed id, uint amount);
+    event Upvote(bytes32 indexed id, uint amount, uint newEffectiveBalance);
+    event Downvote(bytes32 indexed id, uint cost, uint newEffectiveBalance);
+    event Withdraw(bytes32 indexed id, uint amount, uint newEffectiveBalance);
     
     constructor(MiniMeTokenInterface _SNT) public {
         SNT = _SNT;
