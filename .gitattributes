@@ -1,1 +1,3 @@
 .vy linguist-language=Python
+
+*.sol diff linguist-language=Solidity
