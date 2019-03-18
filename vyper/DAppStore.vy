@@ -166,7 +166,7 @@ def _downvote(_from: address, _id: bytes32, _percentDown: uint256):
     @param _id Unique identifier for the dapp
     @param _percentDown The % of SNT staked on the DApp user would like "removed" from the rank
     """
-    assert _percentDown >= 500 and _percentDown <= 500
+    assert _percentDown >= 100 and _percentDown <= 500
 
     dappIdx: uint256 = self.idToIdx[_id]
     dapp: Data = self.dapps[dappIdx]
