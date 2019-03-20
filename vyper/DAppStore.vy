@@ -63,11 +63,22 @@ def upvoteEffect(_id: bytes32, _amount: int128) -> int128:
 
     assert dapp.id == _id
 
+    # Should be accurate up to 10^-18
     mBalance: int128 = dapp.dappBalance + _amount
+
+    # 0 < rate < 1, accurate to at least 10 places
     mRate: int128 = 1 - (mBalance / self.maxStake)
+
+    # Should match accuracy of balance
     mAvailable: int128 = mBalance * mRate
+
+    # > 1, should match accuracy of rate
     mExponent: int128 = 1 / mRate
+
+    # Should match accuracy of rate
     mVMinted: int128 = mAvailable ** mExponent
+
+    # Should match accuracy of balance
     mEBalance: int128 = mBalance - ((mVMinted * mRate) * (mAvailable / mVMinted))
 
     return (mEBalance - dapp.dappBalance)
