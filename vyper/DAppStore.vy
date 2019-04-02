@@ -179,7 +179,6 @@ def _downvote(_from: address, _id: bytes32):
     @dev private low level function for downvoting a dapp by contributing SNT directly to a Dapp's balance
     @param _from Address of the downvoter
     @param _id Unique identifier for the dapp
-    @param _percentDown The % of SNT staked on the DApp user would like "removed" from the rank
     """
 
     dappIdx: uint256 = self.idToIdx[_id]
@@ -226,7 +225,6 @@ def downvote(_id: bytes32):
     """
     @dev Sends SNT directly to the developer and lowers the DApp's effective balance in the Store
     @param _id bytes32 unique identifier.
-    @param _percent_down The % of SNT staked on the DApp user would like "removed" from the rank
     """
     self._downvote(msg.sender, _id)
 
