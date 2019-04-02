@@ -84,11 +84,10 @@ def upvoteEffect(_id: bytes32, _amount: int128) -> int128:
     return (mEBalance - dapp.dappBalance)
 
 @public
-def downvoteCost(_id: bytes32, _percentDown: int128) -> int128[3]:
+def downvoteCost(_id: bytes32) -> int128[3]:
     """
-    @dev Used in the UI along with a slider to let the user pick their desired % effect on the DApp's ranking.
+    @dev For simplicity, users can only downvote by 1% at a time.
     @param _id bytes32 unique identifier.
-    @param _percent_down The % of SNT staked on the DApp user would like "removed" from the rank. 2 decimals fixed pos, i.e.: 3.45% == 345
     @return Array [balanceDownBy, votesRequired, cost]
     """
     dappIdx: uint256 = self.idToIdx[_id]
@@ -96,9 +95,9 @@ def downvoteCost(_id: bytes32, _percentDown: int128) -> int128[3]:
 
     assert dapp.id == _id
 
-    balanceDownBy: int128 = (_percentDown * dapp.effective_balance) / 100
+    balanceDownBy: int128 = dapp.effective_balance / 100
     votesRequired: int128 = (balanceDownBy * dapp.votes_minted * dapp.rate) / dapp.available
-    cost: int128 = (dapp.available / (dapp.votes_minted - (dapp.votes_cast + votesRequired))) * (votesRequired / _percentDown / 10000)
+    cost: int128 = (dapp.available / (dapp.votes_minted - (dapp.votes_cast + votesRequired))) * (votesRequired / 1 / 100)
 
     return [balanceDownBy, votesRequired, cost]
 
@@ -123,8 +122,8 @@ def _createDapp(_from: address, _id: bytes32, _amount: int128):
     assert self.currMax < MAX_UINT256, "Reached maximum dapps limit for the DAppStore"
     assert _amount > 0, "You must spend some SNT to submit a ranking in order to avoid spam"
     assert _amount < self.maxStake, "You cannot stake more SNT than the ceiling dictates"
-    assert convert(self.SNT.allowance(_from, self), int128) >= _amount, "Not enough SNT allowance"
-    assert self.SNT.transferFrom(_from, self, amount), "Transfer failed"
+    assert self.SNT.allowance(_from, self) >= convert(_amount,uint256), "Not enough SNT allowance"
+    assert self.SNT.transferFrom(_from, self, convert(_amount,uint256)), "Transfer failed"
 
     self.idToIdx[_id] = self.currMax
     newDapp: Data
@@ -160,8 +159,8 @@ def _upvote(_from: address, _id: bytes32, _amount: int128):
 
     assert dapp.id == _id, "Error fetching correct data"
     assert dapp.dappBalance + _amount < self.maxStake, "You cannot stake more SNT than the ceiling dictates"
-    assert convert(self.SNT.allowance(_from, self), int128) >= _amount, "Not enough SNT allowance"
-    assert self.SNT.transferFrom(_from, self, amount), "Transfer failed"
+    assert self.SNT.allowance(_from, self) >= convert(_amount,uint256), "Not enough SNT allowance"
+    assert self.SNT.transferFrom(_from, self, convert(_amount,uint256)), "Transfer failed"
 
     dapp.dappBalance += _amount
     dapp.rate = 1 - (dapp.dappBalance / self.maxStake)
@@ -175,25 +174,25 @@ def _upvote(_from: address, _id: bytes32, _amount: int128):
     log.Upvote(_id, _amount, dapp.effective_balance)
 
 @private
-def _downvote(_from: address, _id: bytes32, _percentDown: int128):
+def _downvote(_from: address, _id: bytes32):
     """
     @dev private low level function for downvoting a dapp by contributing SNT directly to a Dapp's balance
     @param _from Address of the downvoter
     @param _id Unique identifier for the dapp
     @param _percentDown The % of SNT staked on the DApp user would like "removed" from the rank
     """
-    assert _percentDown >= 100 and _percentDown <= 500
 
     dappIdx: uint256 = self.idToIdx[_id]
     dapp: Data = self.dapps[dappIdx]
 
     assert dapp.id == _id, "Error fetching correct data"
+    check: decimal = convert(dapp.votes_cast / dapp.votes_minted, decimal)
+    assert check < 0.99, "All valid votes have already been cast"
 
-    downvoteEffect: int128[3] = self.downvoteCost(_id, _percentDown)
-    amount: uint256 = convert(downvoteEffect[2], uint256)
+    downvoteEffect: int128[3] = self.downvoteCost(_id)
 
-    assert convert(self.SNT.allowance(_from, dapp.developer), int128) >= downvoteEffect[2], "Not enough SNT allowance"
-    assert self.SNT.transferFrom(_from, dapp.developer, amount), "Transfer failed"
+    assert self.SNT.allowance(_from, dapp.developer) >= convert(downvoteEffect[2], uint256), "Not enough SNT allowance"
+    assert self.SNT.transferFrom(_from, dapp.developer, convert(downvoteEffect[2], uint256)), "Transfer failed"
 
     dapp.available -= downvoteEffect[2]
     dapp.votes_cast += downvoteEffect[1]
@@ -223,13 +222,13 @@ def upvote(_id: bytes32, _amount: int128):
     self._upvote(msg.sender, _id, _amount)
 
 @public
-def downvote(_id: bytes32, _percentDown: int128):
+def downvote(_id: bytes32):
     """
     @dev Sends SNT directly to the developer and lowers the DApp's effective balance in the Store
     @param _id bytes32 unique identifier.
     @param _percent_down The % of SNT staked on the DApp user would like "removed" from the rank
     """
-    self._downvote(msg.sender, _id, _percentDown)
+    self._downvote(msg.sender, _id)
 
 @public
 def withdraw(_id: bytes32, _amount: int128):
@@ -257,7 +256,7 @@ def withdraw(_id: bytes32, _amount: int128):
     dapp.effective_balance = dapp.dappBalance - ((dapp.votes_cast * dapp.rate) * (dapp.available / dapp.votes_minted))
 
     self.dapps[dappIdx] = dapp
-    assert self.SNT.transferFrom(self, dapp.developer, amount), "Transfer failed"
+    assert self.SNT.transferFrom(self, dapp.developer, convert(_amount,uint256)), "Transfer failed"
 
     log.Withdraw(_id, _amount, dapp.effective_balance)
 
