@@ -170,7 +170,7 @@ def _downvote(_from: address, _id: bytes32):
     dapp: Data = self.dapps[dappIdx]
 
     assert dapp.id == _id, "Error fetching correct data"
-    check: decimal = dapp.votes_minted / dapp.votes_cast
+    check: decimal = convert(dapp.votes_cast / dapp.votes_minted, decimal)
     assert check < 0.99, "All valid votes have already been cast"
 
     downvoteEffect: int128[3] = self.downvoteCost(_id)
