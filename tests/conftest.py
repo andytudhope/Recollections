@@ -48,17 +48,26 @@ def w3(tester):
 
 def _get_contract(w3, source_code, *args, **kwargs):
     interface_codes = kwargs.get('interface_codes')
-    compiler_output = compile_code(
-        source_code,
-        ['bytecode', 'abi'],
-        interface_codes=interface_codes,
-    )
+
+    if interface_codes == None:
+        compiler_output = compile_code(
+            source_code,
+            ['bytecode', 'abi'],
+        )
+        source_map = produce_source_map(source_code)
+    else:
+        compiler_output = compile_code(
+            source_code,
+            ['bytecode', 'abi'],
+            interface_codes=interface_codes,
+        )
+        source_map = produce_source_map(source_code, interface_codes=interface_codes)
+    
     abi = compiler_output['abi']
     bytecode = compiler_output['bytecode']
     contract = w3.eth.contract(abi=abi, bytecode=bytecode)
 
     # Enable vdb.
-    source_map = produce_source_map(source_code, interface_codes=interface_codes)
     set_debug_info(source_code, source_map)
     import vdb
     setattr(vdb.debug_computation.DebugComputation, 'enable_debug', True)
@@ -137,4 +146,14 @@ def DappStore(w3, get_contract, SNT_token):
         path='vyper/DAppStore.vy',
         constructor_args=[SNT_token.address],
         interface_codes=interface_codes
+    )
+
+
+@pytest.fixture
+def LOG(w3, get_contract):
+    return create_contract(
+        w3=w3,
+        get_contract=get_contract,
+        path="vyper/math/log.vy",
+        constructor_args=None
     )
