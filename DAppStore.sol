@@ -11,16 +11,10 @@ contract DAppStore is ApproveAndCallFallBack, BancorFormula {
     // Could be any EIP20/MiniMe token
     MiniMeTokenInterface SNT;
 
-    
     // Total SNT in circulation
     uint total;
-    /* 
-        According to calculations here: https://beta.observablehq.com/@andytudhope/dapp-store-snt-curation-mechanism
-        interesting choices for the ceiling are around 0.4, but this requires more research/modelling.
-        
-        Alternative to a static ceiling: create an `owner` of this contract, set it to a multisig, give that owner multisig
-        permission to alter the ceiling and promise to do so based on the results of voting in https://vote.status.im
-    */
+    
+    // Parameter to calculate Max SNT any one DApp can stake
     uint ceiling;
 
     // The max amount of tokens it is possible to stake, as a percentage of the total in circulation
