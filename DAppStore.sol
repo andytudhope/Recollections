@@ -78,15 +78,15 @@ contract DAppStore is ApproveAndCallFallBack, BancorFormula {
         Data storage d = dapps[dappIdx];
         d.developer = msg.sender;
         d.id = _id;
-        uint decimals = 10000000000;
+        uint decimals = 1000000;
         uint precision;
         uint result;
         
         d.balance = _amount;
         d.rate = decimals - (d.balance * decimals/max);
-        d.available = d.balance * d.rate / decimals;
+        d.available = d.balance * d.rate;
         
-        (result, precision) = BancorFormula.power((d.balance * d.rate), decimals, uint32(decimals), uint32(d.rate));
+        (result, precision) = BancorFormula.power(d.available, decimals, uint32(decimals), uint32(d.rate));
         
         d.votes_minted = result >> precision;
         d.votes_cast = 0;
