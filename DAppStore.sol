@@ -2,10 +2,12 @@ pragma solidity >=0.4.22 <0.6.0;
 
 import "./token/MiniMeTokenInterface.sol";
 import "./token/ApproveAndCallFallBack.sol";
+import "./utils/SafeMath.sol";
+import "./utils/BancorFormula.sol";
 
+contract DAppStore is ApproveAndCallFallBack, BancorFormula {
+    using SafeMath for uint;
 
-contract DAppStore is ApproveAndCallFallBack {
-    
     // Could be any EIP20/MiniMe token
     MiniMeTokenInterface SNT;
 
@@ -39,7 +41,7 @@ contract DAppStore is ApproveAndCallFallBack {
     Data[] public dapps;
     mapping(bytes32 => uint) public id2index;
     
-    event DAppCreated(bytes32 indexed id, uint amount);
+    event DAppCreated(bytes32 indexed id, uint votes_mint, uint amount);
     event Upvote(bytes32 indexed id, uint newEffectiveBalance);
     event Downvote(bytes32 indexed id, uint newEffectiveBalance);
     event Withdraw(bytes32 indexed id, uint newEffectiveBalance);
@@ -47,11 +49,11 @@ contract DAppStore is ApproveAndCallFallBack {
     constructor(MiniMeTokenInterface _SNT) public {
         SNT = _SNT;
         
-        total = 3470483788/100;
+        total = 3470483788;
 
         ceiling = 588;   // 2 dec fixed pos,  ie: 5 == 0.05,  588 == 5.88,
         
-        max = (total * ceiling) / 10000; 
+        max = (total * ceiling) / 1000000; // 4 decimal points for %, 2 because we only use 1/100th of total in circulation
     }
     
     /**
@@ -76,16 +78,23 @@ contract DAppStore is ApproveAndCallFallBack {
         Data storage d = dapps[dappIdx];
         d.developer = msg.sender;
         d.id = _id;
+        uint decimals = 10000000000;
+        uint precision;
+        uint result;
+        
         d.balance = _amount;
-        d.rate = 1 - (d.balance/max);
-        d.available = d.balance * d.rate;
-        d.votes_minted = d.available ** (1/d.rate);
+        d.rate = (1 - (d.balance/max)) * decimals;
+        d.available = d.balance * d.rate / decimals;
+        
+        (result, precision) = BancorFormula.power((d.balance * d.rate), decimals, uint32(decimals), uint32(d.rate));
+        
+        d.votes_minted = result >> precision;
         d.votes_cast = 0;
         d.effective_balance = _amount;
 
         id2index[_id] = dappIdx;
 
-        emit DAppCreated(_id, d.effective_balance);
+        emit DAppCreated(_id, d.votes_minted, d.effective_balance);
     }
     
     /**
