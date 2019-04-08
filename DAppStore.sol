@@ -83,7 +83,7 @@ contract DAppStore is ApproveAndCallFallBack, BancorFormula {
         uint result;
         
         d.balance = _amount;
-        d.rate = (1 - (d.balance/max)) * decimals;
+        d.rate = decimals - (d.balance * decimals/max);
         d.available = d.balance * d.rate / decimals;
         
         (result, precision) = BancorFormula.power((d.balance * d.rate), decimals, uint32(decimals), uint32(d.rate));
