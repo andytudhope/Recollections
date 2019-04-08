@@ -40,18 +40,18 @@ contract DAppStore is ApproveAndCallFallBack {
     mapping(bytes32 => uint) public id2index;
     
     event DAppCreated(bytes32 indexed id, uint amount);
-    event Upvote(bytes32 indexed id, uint amount, uint newEffectiveBalance);
-    event Downvote(bytes32 indexed id, uint cost, uint newEffectiveBalance);
-    event Withdraw(bytes32 indexed id, uint amount, uint newEffectiveBalance);
+    event Upvote(bytes32 indexed id, uint newEffectiveBalance);
+    event Downvote(bytes32 indexed id, uint newEffectiveBalance);
+    event Withdraw(bytes32 indexed id, uint newEffectiveBalance);
     
     constructor(MiniMeTokenInterface _SNT) public {
         SNT = _SNT;
         
-        total = 3470483788;
+        total = 3470483788/100;
 
-        ceiling = 40;   // 2 dec fixed pos,  ie: 4 == 0.04,  400 == 4,
+        ceiling = 588;   // 2 dec fixed pos,  ie: 5 == 0.05,  588 == 5.88,
         
-        max = (total * ceiling) / 10000; // No floating point, but underflow is OK here
+        max = (total * ceiling) / 10000; 
     }
     
     /**
@@ -81,11 +81,11 @@ contract DAppStore is ApproveAndCallFallBack {
         d.available = d.balance * d.rate;
         d.votes_minted = d.available ** (1/d.rate);
         d.votes_cast = 0;
-        d.effective_balance = d.balance - ((d.votes_cast*d.rate)*(d.available/d.votes_minted));
+        d.effective_balance = _amount;
 
         id2index[_id] = dappIdx;
 
-        emit DAppCreated(_id, effective_balance);
+        emit DAppCreated(_id, d.effective_balance);
     }
     
     /**
@@ -134,7 +134,7 @@ contract DAppStore is ApproveAndCallFallBack {
         d.votes_minted = d.available ** (1/d.rate);
         d.effective_balance = d.balance - ((d.votes_cast*d.rate)*(d.available/d.votes_minted));
         
-        emit Upvote(_id, _amount, d.effective_balance);
+        emit Upvote(_id, d.effective_balance);
     }
 
     /**
@@ -179,7 +179,7 @@ contract DAppStore is ApproveAndCallFallBack {
         d.votes_cast = d.votes_cast + v_r;
         d.effective_balance = d.effective_balance - b;
         
-        emit Downvote(_id, c, d.effective_balance);
+        emit Downvote(_id, d.effective_balance);
     }
     
     /**
@@ -207,7 +207,7 @@ contract DAppStore is ApproveAndCallFallBack {
         
         SNT.transferFrom(address(this), d.developer, _amount);
         
-        emit Withdraw(_id, _amount, d.effective_balance);
+        emit Withdraw(_id, d.effective_balance);
     }
     
     /**
@@ -221,7 +221,7 @@ contract DAppStore is ApproveAndCallFallBack {
         address _from,
         uint256 _amount,
         address _token,
-        bytes _data
+        bytes memory _data
     ) 
         public
     {
@@ -256,7 +256,7 @@ contract DAppStore is ApproveAndCallFallBack {
      * @return Decoded registry call.
      */
     function abiDecodeRegister(
-        bytes _data
+        bytes memory _data
     ) 
         private 
         pure 
