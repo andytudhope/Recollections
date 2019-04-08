@@ -25,6 +25,9 @@ contract DAppStore is ApproveAndCallFallBack, BancorFormula {
 
     // The max amount of tokens it is possible to stake, as a percentage of the total in circulation
     uint max;
+
+    // Decimal precision for this contract
+    uint decimals;
     
     // Whether we need more than an id param to identify arbitrary data must still be discussed.
     struct Data {
@@ -52,8 +55,10 @@ contract DAppStore is ApproveAndCallFallBack, BancorFormula {
         total = 3470483788;
 
         ceiling = 588;   // 2 dec fixed pos,  ie: 5 == 0.05,  588 == 5.88,
+
+        decimals = 1000000;
         
-        max = (total * ceiling) / 1000000; // 4 decimal points for %, 2 because we only use 1/100th of total in circulation
+        max = (total * ceiling) / decimals; // 4 decimal points for %, 2 because we only use 1/100th of total in circulation
     }
     
     /**
@@ -78,7 +83,7 @@ contract DAppStore is ApproveAndCallFallBack, BancorFormula {
         Data storage d = dapps[dappIdx];
         d.developer = msg.sender;
         d.id = _id;
-        uint decimals = 1000000;
+        
         uint precision;
         uint result;
         
@@ -107,11 +112,17 @@ contract DAppStore is ApproveAndCallFallBack, BancorFormula {
         uint dappIdx = id2index[_id];
         Data memory d = dapps[dappIdx];
         require(d.id == _id, "Error fetching correct data");
+
+        uint precision;
+        uint result;
         
         uint mBalance = d.balance + _amount;
-        uint mRate = 1 - (mBalance/max);
+        uint mRate = decimals - (mBalance * decimals/max);
         uint mAvailable = mBalance * mRate;
-        uint mVMinted = mAvailable ** (1/mRate);
+        
+        (result, precision) = BancorFormula.power(mAvailable, decimals, uint32(decimals), uint32(mRate));
+        
+        uint mVMinted = result >> precision;
         uint mEBalance = mBalance - ((mVMinted*mRate)*(mAvailable/mVMinted));
         
         return (mEBalance - d.effective_balance);
@@ -137,49 +148,51 @@ contract DAppStore is ApproveAndCallFallBack, BancorFormula {
         require(SNT.allowance(_from, address(this)) >= _amount, "Not enough SNT allowance");
         require(SNT.transferFrom(_from, address(this), _amount), "Transfer failed");
         
+        uint precision;
+        uint result;
+
         d.balance = d.balance + _amount;
-        d.rate = 1 - (d.balance/max);
+        d.rate = decimals - (d.balance * decimals/max);
         d.available = d.balance * d.rate;
-        d.votes_minted = d.available ** (1/d.rate);
+        
+        (result, precision) = BancorFormula.power(d.available, decimals, uint32(decimals), uint32(d.rate));
+        
+        d.votes_minted = result >> precision;
         d.effective_balance = d.balance - ((d.votes_cast*d.rate)*(d.available/d.votes_minted));
         
         emit Upvote(_id, d.effective_balance);
     }
 
     /**
-     * @dev Used in the UI along with a slider to let the user pick their desired % effect on the DApp's ranking.
-     * @param _id bytes32 unique identifier.
-     * @param _percent_down the % of SNT staked on the DApp user would like "remove" from the rank. 2 decimals fixed pos, i.e.: 3.45% == 345
+     * @dev Downvotes always remove 1% of the current ranking.
+     * @param _id bytes32 unique identifier. 
      * @return cost
      */
-    function downvoteCost(bytes32 _id, uint _percent_down) public view returns(uint b, uint v_r, uint c) { 
+    function downvoteCost(bytes32 _id) public view returns(uint b, uint v_r, uint c) { 
         uint dappIdx = id2index[_id];
         Data memory d = dapps[dappIdx];
         require(d.id == _id, "Error fetching correct data");
         
-        uint balance_down_by = (_percent_down * d.effective_balance / 100);
+        uint balance_down_by = (d.effective_balance / 100);
         uint votes_required = (balance_down_by * d.votes_minted * d.rate) / d.available;
-        uint cost = (d.available / (d.votes_minted - (d.votes_cast + votes_required))) * (votes_required / _percent_down / 10000);
+        uint cost = (d.available / (d.votes_minted - (d.votes_cast + votes_required))) * (votes_required / 1 / 10000);
         return (balance_down_by, votes_required, cost);
     }
     
     /**
-     * @dev Sends SNT directly to the developer and lowers the DApp's effective balance in the Store.
+     * @dev Sends SNT directly to the developer and lower the DApp's effective balance by 1%
      * @param _id bytes32 unique identifier.
-     * @param _percent_down the % of SNT staked on the DApp user would like "remove" from the rank.
      */
-    function downvote(bytes32 _id, uint _percent_down) public { 
-        _downvote(msg.sender, _id, _percent_down);
+    function downvote(bytes32 _id) public { 
+        _downvote(msg.sender, _id);
     }
     
-    function _downvote(address _from, bytes32 _id, uint _percent_down) internal { 
-        require(_percent_down >= 100 && _percent_down <= 500, "You must effect the ranking by more than 1, and less than 5, percent");
-         
+    function _downvote(address _from, bytes32 _id) internal { 
         uint dappIdx = id2index[_id];
         Data storage d = dapps[dappIdx];
         require(d.id == _id, "Error fetching correct data");
         
-        (uint b, uint v_r, uint c) = downvoteCost(_id, _percent_down);
+        (uint b, uint v_r, uint c) = downvoteCost(_id);
 
         require(SNT.allowance(_from, d.developer) >= c, "Not enough SNT allowance");
         require(SNT.transferFrom(_from, d.developer, c), "Transfer failed");
@@ -205,10 +218,16 @@ contract DAppStore is ApproveAndCallFallBack, BancorFormula {
         require(msg.sender == d.developer, "Only the developer can withdraw SNT staked on this data");
         require(_amount <= d.available, "You can only withdraw a percentage of the SNT staked, less what you have already received");
         
+        uint precision;
+        uint result;
+
         d.balance = d.balance - _amount;
-        d.rate = 1 - (d.balance/max);
+        d.rate = decimals - (d.balance * decimals/max);
         d.available = d.balance * d.rate;
-        d.votes_minted = d.available ** (1/d.rate);
+        
+        (result, precision) = BancorFormula.power(d.available, decimals, uint32(decimals), uint32(d.rate));
+        
+        d.votes_minted = result >> precision;
         if (d.votes_cast > d.votes_minted) {
             d.votes_cast = d.votes_minted;
         }
@@ -246,11 +265,12 @@ contract DAppStore is ApproveAndCallFallBack, BancorFormula {
         
         require(_amount == amount, "Wrong amount");
 
-        if(sig == bytes4(0x1a214f43)) {
+        // TODO: check these function sigs!
+        if(sig == bytes4(0xe4bb1695)) {
             _createDApp(_from, id, amount);
-        } else if(sig == bytes4(0xac769090)) {
-            _downvote(_from, id, amount);
-        } else if(sig == bytes4(0x2b3df690)) {
+        } else if(sig == bytes4(0xfaa5fd03)) {
+            _downvote(_from, id);
+        } else if(sig == bytes4(0x0643e21b)) {
             _upvote(_from, id, amount);
         } else {
             revert("Wrong method selector");
