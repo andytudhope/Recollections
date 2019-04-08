@@ -22,6 +22,9 @@ contract DAppStore is ApproveAndCallFallBack, BancorFormula {
 
     // Decimal precision for this contract
     uint decimals;
+
+    // Prevents overflows in votes_minted
+    uint safeMax;
     
     // Whether we need more than an id param to identify arbitrary data must still be discussed.
     struct Data {
@@ -53,6 +56,8 @@ contract DAppStore is ApproveAndCallFallBack, BancorFormula {
         decimals = 1000000;
         
         max = (total * ceiling) / decimals; // 4 decimal points for %, 2 because we only use 1/100th of total in circulation
+
+        safeMax = 98 * max / 100;
     }
     
     /**
@@ -66,7 +71,7 @@ contract DAppStore is ApproveAndCallFallBack, BancorFormula {
     
     function _createDApp(address _from, bytes32 _id, uint _amount) internal {
         require(_amount > 0, "You must spend some SNT to submit a ranking in order to avoid spam");
-        require (_amount < max, "You cannot stake more SNT than the ceiling dictates");
+        require (_amount < safeMax, "You cannot stake more SNT than the ceiling dictates");
         require(SNT.allowance(_from, address(this)) >= _amount, "Not enough SNT allowance");
         require(SNT.transferFrom(_from, address(this), _amount), "Transfer failed");
         
@@ -106,6 +111,7 @@ contract DAppStore is ApproveAndCallFallBack, BancorFormula {
         uint dappIdx = id2index[_id];
         Data memory d = dapps[dappIdx];
         require(d.id == _id, "Error fetching correct data");
+        require(d.balance + _amount < safeMax, "You cannot upvote by this much, try with a lower amount");
 
         uint precision;
         uint result;
@@ -138,7 +144,7 @@ contract DAppStore is ApproveAndCallFallBack, BancorFormula {
         Data storage d = dapps[dappIdx];
         require(d.id == _id, "Error fetching correct data");
         
-        require(d.balance + _amount < max, "You cannot stake more SNT than the ceiling dictates");
+        require(d.balance + _amount < safeMax, "You cannot upvote by this much, try with a lower amount");
         require(SNT.allowance(_from, address(this)) >= _amount, "Not enough SNT allowance");
         require(SNT.transferFrom(_from, address(this), _amount), "Transfer failed");
         
