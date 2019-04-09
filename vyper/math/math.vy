@@ -34,7 +34,7 @@ def get_number_length(num: decimal) -> decimal:
     return convert(numberLength, decimal)
 
 
-@public
+@private
 @constant
 def number_power_ten(num: decimal) -> decimal:
 
@@ -49,10 +49,13 @@ def number_power_ten(num: decimal) -> decimal:
 @public
 @constant
 def log(x: decimal) -> decimal:
+
+    assert x > 0.0
+
     result: decimal = 0.0
     nextDigit: decimal = 0.0
 
-    num: decimal = x
+    num: decimal = max(1.0 / x, x)
     digitPadding: decimal = 11.0
 
     # 11 is the precision fraction
@@ -64,6 +67,9 @@ def log(x: decimal) -> decimal:
         digitPadding -= 1.0
 
     # Divided by precision
+    if x < 1.0:
+        return -(result / self.TEN_POWERS_TABLE[11])
+
     return result / self.TEN_POWERS_TABLE[11]
 
 
@@ -72,3 +78,69 @@ def log(x: decimal) -> decimal:
 def ln(x: decimal) -> decimal:
     e: decimal = 0.4342944819
     return self.log(x) / e
+
+
+TEN_LOG: constant(decimal) = 2.3025850929
+LONG_ONE: constant(decimal) = 10000000000.0
+
+
+@private
+@constant
+def exponent_by_squaring(x: decimal, y: decimal) -> decimal:
+
+    if y == 0.0:
+        return 1.0
+    if y == 1.0:
+        return x
+
+    result: decimal = x * x
+    exponent: int128 = convert(max(-y, y), int128)
+
+    if y % 2.0 != 0.0:
+        result *= x
+        exponent -= 1
+
+    for i in range(1, 256):
+        if i >= exponent / 2:
+            break
+
+        result *= x * x
+
+    if y < 0.0:
+        return 1.0 / result
+
+    return result
+
+
+@private
+@constant
+def exponent_by_log(x: decimal, y: decimal) -> decimal:
+
+    if x == 1.0:
+        return 1.0
+
+    exponent: decimal = self.log(x) * y * TEN_LOG
+
+    temp: decimal = 1.0
+    result: decimal = 1.0
+    counter: decimal = 1.0
+
+    for i in range(256):
+        temp = temp * exponent / counter
+        counter += 1.0
+
+        if result == result + temp:
+            break
+
+        result += temp
+
+    return (result * (1.0 + exponent - self.ln(result)) / 100.0) * 100.0
+
+
+@public
+@constant
+def power(x: decimal, y: decimal) -> decimal:
+    if (y * LONG_ONE) % LONG_ONE == 0.0:
+        return self.exponent_by_squaring(x, y)
+    else:
+        return self.exponent_by_log(x, y)
