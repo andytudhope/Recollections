@@ -33,10 +33,10 @@ def decimal_ln(num):
 
 @hypothesis.given(
     num=hypothesis.strategies.decimals(
-        min_value=Decimal(0.1), max_value=Decimal(0.1), places=DECIMAL_PLACES
+        min_value=Decimal(0.1), max_value=Decimal(500), places=DECIMAL_PLACES
     ),
     exp=hypothesis.strategies.decimals(
-        min_value=Decimal(0.1), max_value=Decimal(0.1), places=DECIMAL_PLACES
+        min_value=Decimal(0.1), max_value=Decimal(10), places=DECIMAL_PLACES
     ),
 )
 @hypothesis.settings(deadline=8000)
@@ -44,9 +44,6 @@ def test_power(math_contract, num, exp):
 
     vyper_power = math_contract.power(num, exp)
     actual_power = decimal_power(num, exp)
-
-    print(vyper_power)
-    print(actual_power)
 
     assert actual_power - RESULT_MAX_OFFSET < vyper_power < actual_power + RESULT_MAX_OFFSET
 

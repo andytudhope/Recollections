@@ -58,8 +58,8 @@ def log(x: decimal) -> decimal:
     num: decimal = max(1.0 / x, x)
     digitPadding: decimal = 11.0
 
-    # 11 is the precision fraction
-    for i in range(11):
+    # 12 is the precision fraction
+    for i in range(12):
         nextDigit = self.get_number_length(num) - 1.0
         result += nextDigit * self.TEN_POWERS_TABLE[digitPadding]
 
@@ -68,9 +68,9 @@ def log(x: decimal) -> decimal:
 
     # Divided by precision
     if x < 1.0:
-        return -(result / self.TEN_POWERS_TABLE[11])
+        return -(result / self.TEN_POWERS_TABLE[10])
 
-    return result / self.TEN_POWERS_TABLE[11]
+    return result / self.TEN_POWERS_TABLE[10]
 
 
 @public
@@ -86,12 +86,7 @@ LONG_ONE: constant(decimal) = 10000000000.0
 
 @private
 @constant
-def exponent_by_squaring(x: decimal, y: decimal) -> decimal:
-
-    if y == 0.0:
-        return 1.0
-    if y == 1.0:
-        return x
+def power_by_squaring(x: decimal, y: decimal) -> decimal:
 
     result: decimal = x * x
     exponent: int128 = convert(max(-y, y), int128)
@@ -114,10 +109,7 @@ def exponent_by_squaring(x: decimal, y: decimal) -> decimal:
 
 @private
 @constant
-def exponent_by_log(x: decimal, y: decimal) -> decimal:
-
-    if x == 1.0:
-        return 1.0
+def power_by_exponent(x: decimal, y: decimal) -> decimal:
 
     exponent: decimal = self.log(x) * y * TEN_LOG
 
@@ -126,7 +118,7 @@ def exponent_by_log(x: decimal, y: decimal) -> decimal:
     counter: decimal = 1.0
 
     for i in range(256):
-        temp = temp * exponent / counter
+        temp = temp * exponent / (counter * 10.0)
         counter += 1.0
 
         if result == result + temp:
@@ -134,13 +126,51 @@ def exponent_by_log(x: decimal, y: decimal) -> decimal:
 
         result += temp
 
-    return (result * (1.0 + exponent - self.ln(result)) / 100.0) * 100.0
+    return result
 
 
 @public
 @constant
 def power(x: decimal, y: decimal) -> decimal:
+
+    if y == 0.0:
+        return 1.0
+    if y == 1.0:
+        return x
+
     if (y * LONG_ONE) % LONG_ONE == 0.0:
-        return self.exponent_by_squaring(x, y)
+        return self.power_by_squaring(x, y)
     else:
-        return self.exponent_by_log(x, y)
+
+        # When y < 1.0 power_by_exponent is gas-cheaper and accurate
+        if y < 1.0:
+            return self.power_by_exponent(x, y)
+        else:
+            # When y > 1.0 :
+            # Example: 4.2 * 2.5 = 4.2^2 * 4^0.5
+            yWhole: uint256 = convert(y, uint256)
+            yFraction: decimal = y - convert(yWhole, decimal)
+
+            return self.power_by_squaring(
+                x, convert(yWhole, decimal)
+            ) * self.power_by_exponent(x, yFraction)
+
+
+# @public
+# @constant
+# def safe_power(x: decimal, y: decimal) -> decimal:
+#     xLength: decimal = get_number_length(x)
+
+# if xLength == 0.0:
+#     assert x >= 0.1
+#     assert y <= 10.0
+
+
+#     if xLength == 1.0:
+#         assert y < 10.0
+#     if xLength == 2.0:
+#         assert y < 5.0
+#     if xLength == 3.0:
+#         assert y < 2.5
+
+#     return self.power(x, y)
