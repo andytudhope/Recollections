@@ -8,7 +8,9 @@ from vyper.utils import SizeLimits
 
 getcontext().prec = 168
 DECIMAL_PLACES = 10
-RESULT_MAX_OFFSET = Decimal(0.0000000099)
+# 0000999999 is because the upper limit 9999999999999.9999999999
+# The accuracy here is to the 4-th digit after the point
+RESULT_MAX_OFFSET = Decimal(0.0000999999)
 DECIMAL_RANGE = [Decimal("0." + "0" * d + "2") for d in range(0, DECIMAL_PLACES)]
 
 
@@ -33,34 +35,37 @@ def decimal_ln(num):
 
 @hypothesis.given(
     num=hypothesis.strategies.decimals(
-        min_value=Decimal(0.1), max_value=Decimal(500), places=DECIMAL_PLACES
+        min_value=Decimal(0), max_value=Decimal(999999.9999999999), places=DECIMAL_PLACES
     ),
     exp=hypothesis.strategies.decimals(
-        min_value=Decimal(0.1), max_value=Decimal(10), places=DECIMAL_PLACES
+        min_value=Decimal(0), max_value=Decimal(1), places=DECIMAL_PLACES
     ),
 )
 @hypothesis.settings(deadline=8000)
 def test_power(math_contract, num, exp):
 
-    vyper_power = math_contract.power(num, exp)
+    vyper_power = math_contract.bonding_power(num, exp)
     actual_power = decimal_power(num, exp)
 
-    assert actual_power - RESULT_MAX_OFFSET < vyper_power < actual_power + RESULT_MAX_OFFSET
+    assert actual_power == vyper_power
+
+
 
 @hypothesis.given(
     num=hypothesis.strategies.decimals(
-        min_value=Decimal(0.1),
-        max_value=Decimal(SizeLimits.MAXNUM),
-        places=DECIMAL_PLACES,
-    )
+        min_value=Decimal(999999.9999999999), max_value=Decimal(9999999999999.9999999999), places=DECIMAL_PLACES
+    ),
+    exp=hypothesis.strategies.decimals(
+        min_value=Decimal(0), max_value=Decimal(1), places=DECIMAL_PLACES
+    ),
 )
-@hypothesis.settings(deadline=5000)
-def test_log(math_contract, num):
-    vyper_log = math_contract.log(num)
-    actual_log = decimal_log(num)
+@hypothesis.settings(deadline=8000)
+def test_big_num_power(math_contract, num, exp):
 
-    assert vyper_log == actual_log
+    vyper_power = math_contract.bonding_power(num, exp)
+    actual_power = decimal_power(num, exp)
 
+    assert actual_power - RESULT_MAX_OFFSET < vyper_power < actual_power + RESULT_MAX_OFFSET
 
 @hypothesis.given(
     value=hypothesis.strategies.decimals(
