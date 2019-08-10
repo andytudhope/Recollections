@@ -15,6 +15,12 @@ RESULT_LN_MAX_OFFSET =  Decimal(0.000000001)
 DECIMAL_RANGE = [Decimal("0." + "0" * d + "2") for d in range(0, DECIMAL_PLACES)]
 
 
+@pytest.fixture(scope='module')
+def math_contract(get_contract_module):
+    c = get_contract_module(open("vyper/math/math.vy").read())
+    return c
+
+
 def decimal_truncate(val, decimal_places=DECIMAL_PLACES, rounding=ROUND_DOWN):
     q = "0"
     if decimal_places != 0:
@@ -34,6 +40,7 @@ def decimal_log(num):
 def decimal_ln(num):
     return decimal_truncate(Decimal.ln(num))
 
+
 @hypothesis.given(
     num=hypothesis.strategies.decimals(
         min_value=Decimal(0.0000000001), max_value=Decimal(999999.9999999999), places=DECIMAL_PLACES
@@ -42,7 +49,7 @@ def decimal_ln(num):
         min_value=Decimal(0), max_value=Decimal(1), places=DECIMAL_PLACES
     ),
 )
-@hypothesis.settings(deadline=15000)
+@hypothesis.settings(deadline=15000, max_examples=10)
 def test_power(math_contract, num, exp):
 
     vyper_power = math_contract.bonding_power(num, exp)
@@ -59,13 +66,14 @@ def test_power(math_contract, num, exp):
         min_value=Decimal(0), max_value=Decimal(1), places=DECIMAL_PLACES
     ),
 )
-@hypothesis.settings(deadline=8000)
+@hypothesis.settings(deadline=15000, max_examples=10)
 def test_big_num_power(math_contract, num, exp):
 
     vyper_power = math_contract.bonding_power(num, exp)
     actual_power = decimal_power(num, exp)
 
     assert actual_power - RESULT_POWER_MAX_OFFSET < vyper_power < actual_power + RESULT_POWER_MAX_OFFSET
+
 
 @hypothesis.given(
     num=hypothesis.strategies.decimals(
@@ -74,7 +82,7 @@ def test_big_num_power(math_contract, num, exp):
         places=DECIMAL_PLACES,
     )
 )
-@hypothesis.settings(deadline=15000)
+@hypothesis.settings(deadline=15000, max_examples=10)
 def test_ln(math_contract, num):
     vyper_ln = math_contract.ln(num)
     actual_ln = decimal_ln(num)
