@@ -149,11 +149,13 @@ def DappStore(w3, get_contract, SNT_token):
     )
 
 
-@pytest.fixture
-def math_contract(w3, get_contract):
-    return create_contract(
-        w3=w3,
-        get_contract=get_contract,
-        path="vyper/math/math.vy",
-        constructor_args=None
-    )
+@pytest.fixture(scope='module')
+def get_contract_module():
+    tester = EthereumTester()
+    w3 = Web3(EthereumTesterProvider(tester))
+    w3.eth.setGasPriceStrategy(zero_gas_price_strategy)
+
+    def get_contract_module(source_code, *args, **kwargs):
+        return _get_contract(w3, source_code, *args, **kwargs)
+
+    return get_contract_module
